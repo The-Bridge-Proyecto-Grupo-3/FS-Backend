@@ -6,8 +6,6 @@ import { connectDB } from "./config/db.js";
 
 const app = express();
 
-app.use("/", (req, res) => res.send("Welcome"));
-
 app.use("/users", usersRoutes);
 app.use("/auth", authRoutes);
 
