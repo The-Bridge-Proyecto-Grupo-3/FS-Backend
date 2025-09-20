@@ -45,6 +45,7 @@ export const User = sequelize.define(
   },
   {
     tableName: "users",
+    paranoid: true,
     indexes: [{ unique: true, fields: ["email"] }, { fields: ["role"] }],
   }
 );
