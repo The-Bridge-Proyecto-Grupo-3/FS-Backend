@@ -13,7 +13,7 @@ const transport = nodemailer.createTransport({
 
 export const sendMail = ({ to, subject, text, html }) => {
     transport.sendMail({
-        ...mailData,
+        to, subject, text, html,
         from: env.mail.from
     });
 };
