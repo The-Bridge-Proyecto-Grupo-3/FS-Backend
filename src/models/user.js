@@ -29,8 +29,12 @@ export const User = sequelize.define(
 			defaultValue: false,
 		},
 		twoFactorSecret: {
-			type: DataTypes.CHAR(20),
+			type: DataTypes.CHAR(32),
 			allowNull: true,
+		},
+		twoFactorGeneratedAt: {
+			type: DataTypes.DATE,
+			allowNull: true
 		},
 		emailVerified: {
 			type: DataTypes.BOOLEAN,

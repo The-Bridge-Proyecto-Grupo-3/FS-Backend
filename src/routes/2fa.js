@@ -23,8 +23,9 @@ router.post('/', async (req,res) => {
 router.get('/enable', authenticate, async (req,res) => {
 	const user = req.user;
 	if(user.twoFactorEnabled) return res.status(409).send({ error: "2FA already enabled"});
-	const { secret, qrDataURL } = generate2FASecret(user.email);
+	const { secret, qrDataURL } = await generate2FASecret(user.email);
 	user.twoFactorSecret = secret;
+	user.twoFactorGeneratedAt = new Date();
 	await user.save();
 	return res.send({ qrDataURL, secret });
 });
@@ -33,11 +34,20 @@ router.post('/enable', authenticate, async (req,res) => {
 	const user = req.user;
 	if(user.twoFactorEnabled) return res.status(409).send({ error: "2FA already enabled"});
 	
+	if(new Date() - user.twoFactorGeneratedAt >= 300000) { // 5 min time limit
+		user.twoFactorGeneratedAt = null;
+		user.twoFactorSecret = null;
+		await user.save(); // optional
+		return res.status(401).send({ error: 'Time expired' });
+	}
+	
+	const { code } = req.body;
 	const valid = verifyTOTP(code, user.twoFactorSecret);
 	if(!valid) return res.status(401).send({ error: 'Invalid TOTP'});
+
 	user.twoFactorEnabled = true;
 	await user.save();
-	return res.send({ token });
+	return res.status(204).end();
 });
 
 export default router;
