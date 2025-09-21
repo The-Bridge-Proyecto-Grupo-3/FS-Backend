@@ -1,5 +1,5 @@
-import { User } from '../models/user';
-import { verifyLogin } from '../utils/jwt';
+import { User } from '../models/user.js';
+import { verifyLogin } from '../utils/jwt.js';
 
 export const authenticate = async (req,res,next) => {
 	try {

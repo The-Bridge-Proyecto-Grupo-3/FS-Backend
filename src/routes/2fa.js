@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { signLogin, verify2FALogin } from "../utils/jwt";
-import { User } from "../models/user";
-import { generate2FASecret, verifyTOTP } from "../utils/totp";
+import { signLogin, verify2FALogin } from "../utils/jwt.js";
+import { User } from "../models/user.js";
+import { generate2FASecret, verifyTOTP } from "../utils/totp.js";
+import { authenticate } from "../middleware/authentication.js"
 
 const router = Router();
 
