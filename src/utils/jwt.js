@@ -1,13 +1,12 @@
 import jwt from "jsonwebtoken";
 import { env } from "../config/env.js";
 
-const signToken = (subject,expiresIn,secret) => jwt.sign({}, secret, { subject, expiresIn });
+const signToken = (subject,expiresIn,secret) => jwt.sign({}, secret, { subject: String(subject), expiresIn });
 const verifyToken = (token,secret) => {
 	if(!token) return { err: "Missing token" };
 	try {
 		return { payload: jwt.verify(token,secret) };
 	} catch (error) {
-		console.log(error);
 		const err = (() => {
 			switch(error.name) {
 				case "TokenExpiredError":
