@@ -28,7 +28,7 @@ router.get("/verify", async (req,res) => {
 	const { payload, err } = verifyEmail(token);
 	if(err) return res.status(401).send({ error: err });
 
-	await User.update({ emailVerified: true, emailVerifiedAt: new Date()}, { where: { id: payload.sub, emailVerifiedAt: false }});
+	await User.update({ emailVerified: true, emailVerifiedAt: new Date()}, { where: { id: payload.sub, emailVerified: false }});
 	return res.status(204).end();
 });
 
