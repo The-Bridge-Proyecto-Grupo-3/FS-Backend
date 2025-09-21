@@ -3,8 +3,9 @@ import { env } from "../config/env.js";
 
 const signToken = (subject,expiresIn,secret) => jwt.sign({}, secret, { subject, expiresIn });
 const verifyToken = (token,secret) => {
+	if(!token) return { err: "Missing token" };
 	try {
-		return { payload: jwt.verify(token,secret), err: null }
+		return { payload: jwt.verify(token,secret) };
 	} catch (error) {
 		console.log(error);
 		const err = (() => {
@@ -14,9 +15,11 @@ const verifyToken = (token,secret) => {
 					return "Token expired";
 				case "JsonWebTokenError":
 					return "Invalid token";
+				default:
+					return "Something went wrong";
 			}
 		})();
-		return { payload: null, err };
+		return { err };
 	}
 };
 
