@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
-export const User = sequelize.define(
+const User = sequelize.define(
 	"User",
 	{
 		id: {
@@ -12,12 +12,28 @@ export const User = sequelize.define(
 		email: {
 			type: DataTypes.STRING(190),
 			allowNull: false,
-			validate: { isEmail: true },
+			validate: { isEmail: true }
 		},
 		role: {
-			type: DataTypes.ENUM("user", "admin"),
+			type: DataTypes.ENUM("admin","company","driver"),
 			allowNull: false,
-			defaultValue: "user",
+			defaultValue: "company",
+		},
+		company_id: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			allowNull: true,
+			references: {
+				model: 'companies',
+				key: 'id',
+			},
+		},
+		driver_id: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			allowNull: true,
+			references: {
+				model: 'drivers',
+				key: 'id',
+			},
 		},
 		passwordHash: {
 			type: DataTypes.CHAR(60),
@@ -52,3 +68,10 @@ export const User = sequelize.define(
 		indexes: [{ unique: true, fields: ["email"] }, { fields: ["role"] }],
 	}
 );
+
+User.associate = (models) => {
+	User.belongsTo(models.Driver, { foreignKey: 'driver_id' });
+	User.belongsTo(models.Company, { foreignKey: 'company_id' });
+};
+
+export default User;

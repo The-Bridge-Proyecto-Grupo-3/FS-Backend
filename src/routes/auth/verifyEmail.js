@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { User } from "../../models/user.js";
+import User from "../../models/user.js";
 import { env } from "../../config/env.js";
 import { sendMail } from "../../config/nodemailer.js";
 import { verifyEmail, signEmailVerification } from "../../utils/jwt.js";

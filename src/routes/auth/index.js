@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { User } from "../../models/user.js";
+import User from "../../models/user.js";
+import Company from "../../models/company.js";
+import Driver from "../../models/driver.js";
+import Refuelling from "../../models/refuelling.js";
+import Vehicle from "../../models/vehicle.js";
 import bcrypt from "bcrypt";
 import { signLogin, sign2FALogin } from "../../utils/jwt.js";
 import _2FARoutes from './2fa.js';
