@@ -15,7 +15,7 @@ router.post("/login", async (req,res) => {
 	const { email, password } = req.body;
 	const user = await User.findOne({ where: { email }});
 	const passwordCorrect = await bcrypt.compare(password, user?.passwordHash ?? DUMMY_PASSWORD);
- 	if(!passwordCorrect) return res.status(404).send({ error: "Wrong email or password" });
+	if(!passwordCorrect | !user) return res.status(404).send({ error: "Wrong email or password" });
 	if(!user.emailVerified) return res.status(401).send({ error: "Please verify your email" });
 
 	const requires2FA = user.twoFactorEnabled;
