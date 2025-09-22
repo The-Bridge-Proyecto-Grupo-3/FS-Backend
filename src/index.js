@@ -1,6 +1,6 @@
 import express from "express";
 import { env } from "./config/env.js";
-import authRoutes from "./routes/auth.js";
+import authRoutes from "./routes/auth/index.js";
 import usersRoutes from "./routes/users.js";
 import { connectDB } from "./config/db.js";
 import morgan from "morgan";
