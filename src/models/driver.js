@@ -53,6 +53,7 @@ const Driver = sequelize.define('Driver', {
 Driver.associate = (models) => {
 	Driver.belongsTo(models.Company, { foreignKey: 'company_id' });
 	Driver.hasOne(models.Vehicle, { foreignKey: 'in_use_by' });
+	Driver.hasOne(models.User, { foreignKey: 'driver_id' });
 };
 
 export default Driver;

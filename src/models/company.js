@@ -62,6 +62,7 @@ const Company = sequelize.define('Company', {
 Company.associate = (models) => {
 	Company.hasMany(models.Driver, { foreignKey: 'company_id' });
 	Company.hasMany(models.Vehicle, { foreignKey: 'company_id' });
+	Company.hasOne(models.User, { foreignKey: 'company_id' });
 };
 
 export default Company;

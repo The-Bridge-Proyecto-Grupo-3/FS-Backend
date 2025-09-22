@@ -1,4 +1,4 @@
-import { User } from '../models/user.js';
+import User from '../models/user.js';
 import { verifyLogin } from '../utils/jwt.js';
 
 export const authenticate = async (req,res,next) => {
