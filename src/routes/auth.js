@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { User } from "../models/user.js";
+import User from "../models/user.js";
 import Company from "../models/company.js";
 import Driver from "../models/driver.js";
 import Refuelling from "../models/refuelling.js";
