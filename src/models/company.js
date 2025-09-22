@@ -11,28 +11,6 @@ const Company = sequelize.define('Company', {
 		type: DataTypes.STRING(60),
 		allowNull: false
 	},
-	email: {
-		type: DataTypes.STRING(190),
-		allowNull: false,
-		unique: true
-	},
-	passwordHash: {
-		type: DataTypes.CHAR(60),
-		allowNull: false
-	},
-	twoFactorEnabled: {
-		type: DataTypes.BOOLEAN,
-		allowNull: false,
-		defaultValue: false,
-	},
-	twoFactorSecret: {
-		type: DataTypes.CHAR(32),
-		allowNull: true,
-	},
-	twoFactorGeneratedAt: {
-		type: DataTypes.DATE,
-		allowNull: true
-	},
 	postal_code: {
 		type: DataTypes.INTEGER.UNSIGNED,
 		allowNull: false
