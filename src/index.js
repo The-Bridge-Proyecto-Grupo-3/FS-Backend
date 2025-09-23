@@ -10,6 +10,7 @@ app.use(morgan('tiny'));
 
 app.use("/users", require("./routes/users"));
 app.use("/auth", require("./routes/auth"));
+app.use("/vehicles", require("./routes/vehicles"));
 
 (async () => {
   await connectDB();
