@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
-import { env } from "../config/env.js";
+const jwt = require("jsonwebtoken");
+const env = require("../config/env");
 
 const signToken = (subject,expiresIn,secret) => jwt.sign({}, secret, { subject: String(subject), expiresIn });
 const verifyToken = (token,secret) => {
@@ -22,10 +22,11 @@ const verifyToken = (token,secret) => {
 	}
 };
 
-export const signLogin = user => signToken(user.id,env.jwt.accessExpires,env.jwt.accessSecret);
-export const sign2FALogin = user => signToken(user.id,env.jwt.tempExpires,env.jwt.tempSecret);
-export const signEmailVerification = user => signToken(user.id,env.jwt.emailExpires,env.jwt.emailSecret);
-
-export const verifyLogin = token => verifyToken(token, env.jwt.accessSecret);
-export const verify2FALogin = token => verifyToken(token, env.jwt.tempSecret);
-export const verifyEmail = token => verifyToken(token, env.jwt.emailSecret);
+module.exports = {
+	signLogin: user => signToken(user.id,env.jwt.accessExpires,env.jwt.accessSecret),
+	sign2FALogin: user => signToken(user.id,env.jwt.tempExpires,env.jwt.tempSecret),
+	signEmailVerification: user => signToken(user.id,env.jwt.emailExpires,env.jwt.emailSecret),
+	verifyLogin: token => verifyToken(token, env.jwt.accessSecret),
+	verify2FALogin: token => verifyToken(token, env.jwt.tempSecret),
+	verifyEmail: token => verifyToken(token, env.jwt.emailSecret),
+}

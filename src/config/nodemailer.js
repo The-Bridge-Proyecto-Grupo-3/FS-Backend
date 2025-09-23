@@ -1,5 +1,5 @@
-import nodemailer from 'nodemailer';
-import { env } from '../config/env.js';
+const nodemailer = require('nodemailer');
+const env = require('../config/env');
 
 const transport = nodemailer.createTransport({
     port: env.smtp.port,
@@ -11,9 +11,11 @@ const transport = nodemailer.createTransport({
     logger: env.mail.logging
 });
 
-export const sendMail = ({ to, subject, text, html }) => {
-    transport.sendMail({
-        to, subject, text, html,
-        from: env.mail.from
-    });
-};
+module.exports = {
+    sendMail: ({ to, subject, text, html }) => {
+        transport.sendMail({
+            to, subject, text, html,
+            from: env.mail.from
+        });
+    }
+}

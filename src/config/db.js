@@ -1,15 +1,6 @@
-import { Sequelize } from "sequelize";
-import { env } from "./env.js";
+const { sequelize } = require("../models");
 
-export const sequelize = new Sequelize(env.db.name, env.db.user, env.db.pass, {
-  host: env.db.host,
-  port: env.db.port,
-  dialect: "mysql",
-  logging: env.db.logging,
-  dialectOptions: { multipleStatements: false },
-});
-
-export async function connectDB() {
+module.exports = async function connectDB() {
   try {
     await sequelize.authenticate();
     await sequelize.sync();
