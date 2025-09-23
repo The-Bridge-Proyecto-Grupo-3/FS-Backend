@@ -24,6 +24,6 @@ module.exports = {
 		if(role==="admin") return null;
 		if(role==="company") return req.user.company_id;
 		if(role==="driver") return req.user.Driver.company_id;
-		return null;
+		return -1;
 	}
 }
