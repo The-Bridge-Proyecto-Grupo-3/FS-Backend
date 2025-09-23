@@ -16,7 +16,7 @@ router.post('/', async (req,res) => {
 	const valid = verifyTOTP(code, user.twoFactorSecret);
 	if(!valid) return res.status(401).send({ error: 'Invalid TOTP'});
 
-	const token = signLogin(user);
+	const token = signLogin(user); // TODO missing company/driver
 
 	return res.send({ token, user });
 });
