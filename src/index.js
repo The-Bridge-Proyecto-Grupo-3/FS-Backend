@@ -1,6 +1,6 @@
 const express = require("express");
 const env = require("./config/env");
-const { connectDB } = require("./config/db");
+const connectDB = require("./config/db");
 const morgan = require("morgan");
 
 const app = express();
