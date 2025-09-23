@@ -1,53 +1,52 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../config/db.js";
-
-const Refuelling = sequelize.define('Refuelling', {
-	driver_id: {
-		type: DataTypes.INTEGER.UNSIGNED,
-		primaryKey: true,
-		allowNull: false,
-		references: {
-			model: 'drivers',
-			key: 'id',
+module.exports = (sequelize, DataTypes) => {
+	const Refuelling = sequelize.define('Refuelling', {
+		driver_id: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			primaryKey: true,
+			allowNull: false,
+			references: {
+				model: 'drivers',
+				key: 'id',
+			},
 		},
-	},
-	vehicle_id: {
-		type: DataTypes.INTEGER.UNSIGNED,
-		primaryKey: true,
-		allowNull: false,
-		references: {
-			model: 'vehicles',
-			key: 'id',
+		vehicle_id: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			primaryKey: true,
+			allowNull: false,
+			references: {
+				model: 'vehicles',
+				key: 'id',
+			},
 		},
-	},
-	price: {
-		type: DataTypes.INTEGER.UNSIGNED,
-		allowNull: false
-	},
-	quantity: {
-		type: DataTypes.FLOAT.UNSIGNED,
-		allowNull: true
-	},
-	mileage: {
-		type: DataTypes.INTEGER.UNSIGNED,
-		allowNull: true
-	},
-	date: {
-		type: DataTypes.DATE,
-		allowNull: false
-	}
-}, {
-	tableName: 'refuellings',
-	timestamps: false
-});
-
-Refuelling.associate = (models) => {
-	Refuelling.belongsTo(models.Driver, {
-		foreignKey: 'driver_id'
+		price: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			allowNull: false
+		},
+		quantity: {
+			type: DataTypes.FLOAT.UNSIGNED,
+			allowNull: true
+		},
+		mileage: {
+			type: DataTypes.INTEGER.UNSIGNED,
+			allowNull: true
+		},
+		date: {
+			type: DataTypes.DATE,
+			allowNull: false
+		}
+	}, {
+		tableName: 'refuellings',
+		timestamps: false
 	});
-	Refuelling.belongsTo(models.Vehicle, {
-		foreignKey: 'vehicle_id'
-	});
-};
 
-export default Refuelling;
+	Refuelling.associate = (models) => {
+		Refuelling.belongsTo(models.Driver, {
+			foreignKey: 'driver_id'
+		});
+		Refuelling.belongsTo(models.Vehicle, {
+			foreignKey: 'vehicle_id'
+		});
+	};
+
+	return Refuelling;
+}

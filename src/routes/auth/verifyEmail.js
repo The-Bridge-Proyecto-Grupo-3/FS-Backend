@@ -1,8 +1,8 @@
-import { Router } from "express";
-import User from "../../models/user.js";
-import { env } from "../../config/env.js";
-import { sendMail } from "../../config/nodemailer.js";
-import { verifyEmail, signEmailVerification } from "../../utils/jwt.js";
+const { Router } = require("express");
+const { User } = require("../../models");
+const { env } = require("../../config/env");
+const { sendMail } = require("../../config/nodemailer");
+const { verifyEmail, signEmailVerification } = require("../../utils/jwt");
 
 const router = Router();
 
@@ -33,4 +33,4 @@ router.post("/", async (req,res) => {
 	return res.status(204).end();
 });
 
-export default router;
+module.exports = router;

@@ -1,17 +1,15 @@
-import express from "express";
-import { env } from "./config/env.js";
-import authRoutes from "./routes/auth/index.js";
-import usersRoutes from "./routes/users.js";
-import { connectDB } from "./config/db.js";
-import morgan from "morgan";
+const express = require("express");
+const env = require("./config/env");
+const { connectDB } = require("./config/db");
+const morgan = require("morgan");
 
 const app = express();
 
 app.use(express.json({ limit: '10kb' }));
 app.use(morgan('tiny'));
 
-app.use("/users", usersRoutes);
-app.use("/auth", authRoutes);
+app.use("/users", require("./routes/users"));
+app.use("/auth", require("./routes/auth"));
 
 (async () => {
   await connectDB();
