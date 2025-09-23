@@ -5,6 +5,13 @@ const morgan = require("morgan");
 
 const app = express();
 
+if(env.nodeEnv === "development") {
+  const swaggerUi = require("swagger-ui-express");
+  const apiSpec = require('../docs/api');
+  app.use('/docs', swaggerUi.serve, swaggerUi.setup(apiSpec));
+  console.log("Swagger loaded");
+}
+
 app.use(express.json({ limit: '10kb' }));
 app.use(morgan('tiny'));
 
