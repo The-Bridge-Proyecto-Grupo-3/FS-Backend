@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const { authenticate, hasRole, limitCompanyScope } = require("../middleware/authentication");
-const { Vehicle, Driver, sequelize } = require("../models");
+const { Vehicle, Driver, Sequelize: { Op } } = require("../models");
 
 const router = Router();
 
@@ -58,10 +58,31 @@ router.delete("/:id", hasRole("admin","company"), async (req,res) => {
 });
 
 router.get("/", async (req,res) => {
+	const { available } = req.query; // return only unused vehicles
 	const companyId = limitCompanyScope(req);
 	try {
-		const vehicles = await Vehicle.findAll({ where: { company_id: companyId }});
+		const vehicles = await Vehicle.findAll({ where: {
+			company_id: companyId, 
+			...(available === "true" ? {
+				in_use_by: {
+					[Op.is]: null
+				}
+			}:{})
+		}});
 		return res.status(200).send(vehicles);
+	} catch (error) {
+		console.log(error);
+		return res.status(500).send({ error: "Internal Server Error" });
+	}
+});
+
+router.get("/:id", async (req,res) => {
+	const { id } = req.params;
+	const companyId = limitCompanyScope(req);
+	try {
+		const vehicle = await Vehicle.findOne({ where: { id, company_id: companyId }});
+		if(!vehicle) return res.status(404).send({ error: 'Vehicle not found' });
+		return res.status(200).send(vehicle);
 	} catch (error) {
 		console.log(error);
 		return res.status(500).send({ error: "Internal Server Error" });
@@ -99,10 +120,9 @@ router.put("/:id/assign", async (req,res) => {
 	}
 });
 
-router.put("/:id/unassign", async (req,res) => {
+router.delete("/:id/assign", async (req,res) => {
 	const { id } = req.params;
 	const companyId = limitCompanyScope(req);
-	const where = companyId ? { company_id: companyId }:{}
 	try {
 		const vehicle = await Vehicle.findOne({ where: {
 			id,
