@@ -1,8 +1,8 @@
-import { Router } from "express";
-import { signLogin, verify2FALogin } from "../utils/jwt.js";
-import User from "../models/user.js";
-import { generate2FASecret, verifyTOTP } from "../utils/totp.js";
-import { authenticate } from "../middleware/authentication.js"
+const { Router } = require("express");
+const { signLogin, verify2FALogin } = require("../../utils/jwt");
+const { User } = require("../../models");
+const { generate2FASecret, verifyTOTP } = require("../../utils/totp");
+const { authenticate } = require("../../middleware/authentication");
 
 const router = Router();
 
@@ -17,7 +17,8 @@ router.post('/', async (req,res) => {
 	if(!valid) return res.status(401).send({ error: 'Invalid TOTP'});
 
 	const token = signLogin(user);
-	return res.send({ token });
+
+	return res.send({ token, user });
 });
 
 router.get('/enable', authenticate, async (req,res) => {
@@ -50,4 +51,4 @@ router.post('/enable', authenticate, async (req,res) => {
 	return res.status(204).end();
 });
 
-export default router;
+module.exports = router;
