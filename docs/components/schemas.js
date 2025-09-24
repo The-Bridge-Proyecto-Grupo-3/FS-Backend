@@ -63,7 +63,7 @@ module.exports = {
 			user: {
 				type: 'object',
 				nullable: true,
-				anyOf: [
+				oneOf: [
 					{ $ref: '#/components/schemas/Company'},
 					{ $ref: '#/components/schemas/Driver'},
 				]
