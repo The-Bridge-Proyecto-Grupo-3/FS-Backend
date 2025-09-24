@@ -20,12 +20,11 @@ router.post("/login", async (req,res) => {
 	const token = requires2FA ? sign2FALogin(user):signLogin(user);
 
 	const userResult = {
-		role: user.role,
 		...(user.Driver ? user.Driver.toJSON():{}),
 		...(user.Company ? user.Company.toJSON():{}),
 	}
 
-	return res.send({ requires2FA, token, user: userResult });
+	return res.send({ requires2FA, token, role: user.role, user: userResult });
 });
 
 module.exports = router;

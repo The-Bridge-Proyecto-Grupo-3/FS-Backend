@@ -42,6 +42,7 @@ module.exports = {
 		properties: {
 			requires2FA: { type: 'boolean' },
 			token: { type: 'string' },
+			role: { type: 'string', enum: ['admin','company','driver']},
 			user: {
 				type: 'object',
 				nullable: true,
