@@ -23,10 +23,11 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		license_plate: {
 			type: DataTypes.CHAR(7),
-			allowNull: false
+			allowNull: false,
+			unique: true
 		},
 		registration_date: {
-			type: DataTypes.DATE,
+			type: DataTypes.DATEONLY,
 			allowNull: false
 		},
 		type: {

@@ -14,4 +14,16 @@ module.exports = {
 			return res.status(500).send({ error: "Internal Server Error" });
 		}
 	},
+	hasRole: (...roles) => async (req,res,next) => {
+		if(!req.user) return res.status(500).send({ error: "Internal Server Error: Missing authentication."});
+		if(!roles.includes(req.user.role)) return res.status(403).send({ error: "Access Forbidden"});
+		next();
+	},
+	limitCompanyScope: (req) => {
+		const role = req.user.role;
+		if(role==="admin") return null;
+		if(role==="company") return req.user.company_id;
+		if(role==="driver") return req.user.Driver.company_id;
+		return -1;
+	}
 }
