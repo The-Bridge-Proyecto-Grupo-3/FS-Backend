@@ -15,12 +15,14 @@ module.exports = {
 		{ name: 'Auth' },
 		{ name: 'Companies' },
 		{ name: 'Drivers' },
+		{ name: 'Receipts' },
 		{ name: 'Vehicles' },
 	],
 	paths: {
 		...require('./paths/auth'),
 		...require('./paths/drivers'),
 		...require('./paths/companies'),
+		...require('./paths/receipts'),
 		...require('./paths/vehicles'),
 	},
 	components: {
