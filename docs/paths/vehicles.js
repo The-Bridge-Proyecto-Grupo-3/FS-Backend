@@ -22,6 +22,9 @@ module.exports = {
 			tags: ['Vehicles'],
 			summary: 'Lists all vehicles',
 			security: security.jwt,
+			parameters: [
+				{ name: 'available', in: 'query', required: false, description: 'Filter unused vehicles', schema: { type: 'boolean' }}
+			],
 			responses: {
 				200: {
 					description: 'List all vehicles',
@@ -56,7 +59,11 @@ module.exports = {
 							schema: { $ref: '#/components/schemas/Vehicle' }
 						}
 					}
-				}
+				},
+				403: {
+					description: 'Access Forbidden: driver cannot create vehicles',
+					content: contentError
+				},
 			}
 		}
 	},
@@ -70,7 +77,7 @@ module.exports = {
 			],
 			responses: {
 				200: {
-					description: 'Registered vehicle',
+					description: 'Information of vehicle with ID',
 					content: {
 						'application/json': { 
 							schema: { $ref: '#/components/schemas/Vehicle' }
@@ -107,6 +114,10 @@ module.exports = {
 						}
 					}
 				},
+				403: {
+					description: 'Access Forbidden: driver cannot modify vehicles',
+					content: contentError
+				},
 				404: {
 					description: 'Vehicle not found',
 					content: contentError
@@ -128,6 +139,10 @@ module.exports = {
 							schema: { $ref: '#/components/schemas/Vehicle' }
 						}
 					}
+				},
+				403: {
+					description: 'Access Forbidden: driver cannot delete vehicles',
+					content: contentError
 				},
 				404: {
 					description: 'Vehicle not found',
@@ -190,6 +205,10 @@ module.exports = {
 							schema: { $ref: '#/components/schemas/Vehicle' }
 						}
 					}
+				},
+				403: {
+					description: 'Access Forbidden: driver cannot remove other drivers from vehicles',
+					content: contentError
 				},
 				404: {
 					description: 'Vehicle not found',
