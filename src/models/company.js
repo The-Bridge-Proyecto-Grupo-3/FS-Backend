@@ -29,11 +29,11 @@ module.exports = (sequelize, DataTypes) => {
 				validCIF(cif) {
 					if(!cif || typeof cif != "string" || cif.length != 9) return false;
 					if(!/^[A-HJNP-SU-W]\d{7}[0-9A-J]$/.test(cif)) return false;
-					if((cif.substring(1,3) === "00" || cif[0].match(/[NP-SW]/)) && !cif[8].match(/[A-J]/)) return false;
-					if(cif[0].match(/[ABEH]/) && !cif[8].match(/[0-9]/)) return false;
+					if((cif.substring(1,3) === "00" || /[NP-SW]/.test(cif[0])) && !/[A-J]/.test(cif[8])) return false;
+					if(/[ABEH]/.test(cif[0]) && !/\d/.test(cif[8])) return false;
 
 					let control = cif[8];
-					if(control.match(/[A-J]/)) control = (cif[8].charCodeAt(0)-54)%10;
+					if(/[A-J]/.test(control)) control = (cif[8].charCodeAt(0)-54)%10;
 					const sumEven = (+cif[2]) + (+cif[4]) + (+cif[6]);
 					let sumOdd = 0;
 					for(let i = 1; i <= 7; i+=2) {
