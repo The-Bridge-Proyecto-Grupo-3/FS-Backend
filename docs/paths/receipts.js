@@ -1,15 +1,5 @@
 const security = require('../security');
 
-const driverIdSchema = {
-	type: 'object',
-	properties: {
-		driverId: {
-			type: 'integer',
-			description: 'Driver ID to assign the vehicle to. Only needed if user is not a driver'
-		}
-	}
-};
-
 const contentError = {
 	'application/json': { 
 		schema: { $ref: '#/components/schemas/Error' }
