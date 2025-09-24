@@ -11,6 +11,7 @@ module.exports = {
 			req.user = await User.findByPk(payload.sub, { include: [Company, Driver] });
 			next();
 		} catch (error) {
+			console.log(error);
 			return res.status(500).send({ error: "Internal Server Error" });
 		}
 	},
