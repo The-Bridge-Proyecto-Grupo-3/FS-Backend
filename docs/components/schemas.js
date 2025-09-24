@@ -25,6 +25,12 @@ const driver = {
 	last_name: { type: 'string' }
 };
 
+const receipt = {
+	quantity: { type: 'number' },
+	price: { type: 'integer' },
+	mileage: { type: 'integer' }
+};
+
 module.exports = {
 	Vehicle: {
 		type: 'object',
@@ -114,6 +120,13 @@ module.exports = {
 		properties: {
 			secret: { type: 'string' },
 			qrDataURL: { type: 'string' }
+		}
+	},
+	ReceiptInput: {
+		type: 'object',
+		required: Object.keys(receipt),
+		properties: {
+			...receipt
 		}
 	},
 	Error: {

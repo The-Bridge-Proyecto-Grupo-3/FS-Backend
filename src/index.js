@@ -2,6 +2,8 @@ const express = require("express");
 const env = require("./config/env");
 const connectDB = require("./config/db");
 const morgan = require("morgan");
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 
@@ -15,9 +17,17 @@ if(env.nodeEnv === "development") {
 app.use(express.json({ limit: '10kb' }));
 app.use(morgan('tiny'));
 
-app.use("/users", require("./routes/users"));
-app.use("/auth", require("./routes/auth"));
-app.use("/vehicles", require("./routes/vehicles"));
+const routes = ['users','auth','vehicles','receipts'];
+
+fs
+  .readdirSync(path.join(__dirname, 'routes'))
+  .forEach(file => {
+    const route = file.endsWith(".js") ? file.slice(0,-3):file;
+    const routeImport = require(`./routes/${route}`);
+    if(typeof routeImport !== 'function') 
+      throw new Error(`Undefined router: /${route}`);
+    app.use(`/${route}`, routeImport);
+  });
 
 (async () => {
   await connectDB();
