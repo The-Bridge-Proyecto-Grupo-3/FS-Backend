@@ -18,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
 				key: 'id',
 			},
 		},
+		fuel_type: {
+			type: DataTypes.ENUM('95','98','diesel','glp','electric'),
+			allowNull: false
+		},
 		price: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false
@@ -32,7 +36,8 @@ module.exports = (sequelize, DataTypes) => {
 		}
 	}, {
 		tableName: 'receipts',
-		timestamps: true
+		timestamps: true,
+		indexes:[{ unique: false, fields:['fuel_type'] }]
 	});
 
 	Receipt.associate = (models) => {
