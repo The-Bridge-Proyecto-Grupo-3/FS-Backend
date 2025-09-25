@@ -36,12 +36,8 @@ module.exports = (sequelize, DataTypes) => {
 	});
 
 	Receipt.associate = (models) => {
-		Receipt.belongsTo(models.Driver, {
-			foreignKey: 'driver_id'
-		});
-		Receipt.belongsTo(models.Vehicle, {
-			foreignKey: 'vehicle_id'
-		});
+		Receipt.belongsTo(models.Driver, { foreignKey: 'driver_id' });
+		Receipt.belongsTo(models.Vehicle, { foreignKey: 'vehicle_id'});
 	};
 
 	return Receipt;

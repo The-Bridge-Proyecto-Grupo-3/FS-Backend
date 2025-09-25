@@ -12,7 +12,7 @@ router.use('/verify', require("./verifyEmail"));
 
 router.post("/login", rateLimit(600,10), rateLimit(60,5), async (req,res) => {
 	const { email, password } = req.body;
-	const user = await User.findOne({ where: { email }, include: [Driver, Company]});
+	const user = await User.findOne({ where: { email }, include: [Driver,Company] });
 	const passwordCorrect = await bcrypt.compare(password, user?.passwordHash ?? DUMMY_PASSWORD);
 	if(!passwordCorrect | !user) return res.status(404).send({ error: "Wrong email or password" });
 	if(!user.emailVerified) return res.status(401).send({ error: "Please verify your email" });
@@ -22,9 +22,9 @@ router.post("/login", rateLimit(600,10), rateLimit(60,5), async (req,res) => {
 
 	const userResult = {
 		role: user.role,
-		...(user.Driver ? user.Driver.toJSON():{}),
-		...(user.Company ? user.Company.toJSON():{}),
-	}
+		...user.Driver?.toJSON(),
+		...user.Company?.toJSON(),
+	};
 
 	return res.send({ requires2FA, token, user: userResult });
 });
