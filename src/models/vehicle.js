@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: false
 		},
 		license_plate: {
-			type: DataTypes.CHAR(7),
+			type: DataTypes.CHAR(8),
 			allowNull: false,
 			unique: true
 		},

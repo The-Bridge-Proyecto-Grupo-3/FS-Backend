@@ -21,9 +21,9 @@ router.post("/login", async (req,res) => {
 
 	const userResult = {
 		role: user.role,
-		...(user.Driver ? user.Driver.toJSON():{}),
-		...(user.Company ? user.Company.toJSON():{}),
-	}
+		...user.Driver?.toJSON(),
+		...user.Company?.toJSON(),
+	};
 
 	return res.send({ requires2FA, token, user: userResult });
 });

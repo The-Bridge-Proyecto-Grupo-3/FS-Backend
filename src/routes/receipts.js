@@ -1,6 +1,6 @@
 const { Router } = require("express");
-const { authenticate, hasRole } = require("../middleware/authentication");
-const { Receipt } = require("../models");
+const { authenticate, hasRole, limitCompanyScope } = require("../middleware/authentication");
+const { Receipt, Driver, Vehicle } = require("../models");
 
 const router = Router();
 router.use(authenticate);
@@ -18,5 +18,25 @@ router.post("/", hasRole('driver'), async (req,res) => {
 		return res.status(500).send({ error: "Internal Server Error" });
 	}
 });
+
+router.get("/", hasRole("admin","company"), async (req,res) => {
+	const companyId = limitCompanyScope(req);
+	const where = {
+		...(companyId ? { company_id: companyId ?? req.body.companyId }:{})
+	};
+	try {
+		const receipts = await Receipt.findAll({
+			attributes: { exclude: ['driver_id','vehicle_id'] },
+			include: [
+				{ model: Driver, where },
+				Vehicle
+			]
+		});
+		return res.send(receipts);
+	} catch (error) {
+		console.error(error);
+		return res.status(500).send({ error: "Internal Server Error" });
+	}
+})
 
 module.exports = router;
