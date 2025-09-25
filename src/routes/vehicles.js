@@ -8,8 +8,9 @@ router.use(authenticate);
 
 router.post("/", hasRole("admin","company"), async (req,res) => {
 	try {
-		const companyId = limitCompanyScope(req);
-		const vehicle = await Vehicle.create({ ...req.body, company_id: companyId ?? req.body.companyId, in_use_by: null });
+		const company_id = limitCompanyScope(req) ?? req.body?.company_id;
+		if(!company_id) return res.status(400).send({ error: 'Missing company_id' });
+		const vehicle = await Vehicle.create({ ...req.body, company_id, in_use_by: null });
 		return res.status(201).send(vehicle);
 	} catch (error) {
 		console.log(error);
@@ -20,11 +21,11 @@ router.post("/", hasRole("admin","company"), async (req,res) => {
 router.put("/:id", hasRole("admin","company"), async (req,res) => {
 	const { id } = req.params;
 	try {
-		const companyId = limitCompanyScope(req);
+		const company_id = limitCompanyScope(req);
 		const [found] = await Vehicle.update(req.body, {
 			where : {
 				id,
-				...(companyId ? { company_id: companyId }:{})
+				...(company_id ? { company_id }:{})
 			},
 			fields: ['brand','model','license_plate','registration_date','type']
 		});
@@ -41,11 +42,11 @@ router.put("/:id", hasRole("admin","company"), async (req,res) => {
 router.delete("/:id", hasRole("admin","company"), async (req,res) => {
 	const { id } = req.params;
 	try {
-		const companyId = limitCompanyScope(req);
+		const company_id = limitCompanyScope(req);
 		const found = await Vehicle.destroy({
 			where : {
 				id,
-				...(companyId ? { company_id: companyId }:{})
+				...(company_id ? { company_id }:{})
 			}
 		});
 		if(!found) return res.status(404).send({ error: "Vehicle not found" });
@@ -59,10 +60,10 @@ router.delete("/:id", hasRole("admin","company"), async (req,res) => {
 
 router.get("/", async (req,res) => {
 	const { available } = req.query; // return only unused vehicles
-	const companyId = limitCompanyScope(req);
+	const company_id = limitCompanyScope(req);
 	try {
 		const vehicles = await Vehicle.findAll({ where: {
-			company_id: companyId, 
+			company_id, 
 			...(available === "true" ? {
 				in_use_by: {
 					[Op.is]: null
@@ -78,9 +79,9 @@ router.get("/", async (req,res) => {
 
 router.get("/:id", async (req,res) => {
 	const { id } = req.params;
-	const companyId = limitCompanyScope(req);
+	const company_id = limitCompanyScope(req);
 	try {
-		const vehicle = await Vehicle.findOne({ where: { id, company_id: companyId }});
+		const vehicle = await Vehicle.findOne({ where: { id, company_id }});
 		if(!vehicle) return res.status(404).send({ error: 'Vehicle not found' });
 		return res.status(200).send(vehicle);
 	} catch (error) {
@@ -91,13 +92,13 @@ router.get("/:id", async (req,res) => {
 
 router.put("/:id/assign", async (req,res) => {
 	const { id } = req.params;
-	const companyId = limitCompanyScope(req);
-	const where = companyId ? { company_id: companyId }:{}
+	const company_id = limitCompanyScope(req);
+	const where = company_id ? { company_id }:{}
 	try {
 		let driver = req.user.Driver;
 		if(!driver) {
-			if(!req.body.driverId) return res.status(400).send({ error: "Missing driverId" });
-			driver = await Driver.findOne({ where: {id: req.body.driverId, ...where} });
+			if(!req.body?.driver_id) return res.status(400).send({ error: "Missing driver_id" });
+			driver = await Driver.findOne({ where: {id: req.body.driver_id, ...where} });
 		}
 		if(!driver) return res.status(404).send({ error: "Driver not found" });
 
@@ -122,11 +123,11 @@ router.put("/:id/assign", async (req,res) => {
 
 router.delete("/:id/assign", async (req,res) => {
 	const { id } = req.params;
-	const companyId = limitCompanyScope(req);
+	const company_id = limitCompanyScope(req);
 	try {
 		const vehicle = await Vehicle.findOne({ where: {
 			id,
-			...(companyId ? {company_id: companyId}:{})
+			...(company_id ? {company_id}:{})
 		}});
 
 		if(!vehicle) return res.status(404).send({ error: "Vehicle not found" });

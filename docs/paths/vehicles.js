@@ -3,7 +3,7 @@ const security = require('../security');
 const driverIdSchema = {
 	type: 'object',
 	properties: {
-		driverId: {
+		driver_id: {
 			type: 'integer',
 			description: 'Driver ID to assign the vehicle to. Only needed if user is not a driver'
 		}
@@ -152,7 +152,7 @@ module.exports = {
 						}
 					}
 				},
-				400: { description: 'Missing driverId' },
+				400: { description: 'Missing driver_id' },
 				404: { description: 'Vehicle not found' },
 				409: { description: 'Vehicle already assigned or driver has another vehicle' },
 			}

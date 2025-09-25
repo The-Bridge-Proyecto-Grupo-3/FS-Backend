@@ -7,11 +7,10 @@ router.use(authenticate);
 
 router.post("/", hasRole('driver'), async (req,res) => {
 	try {
-		const { price, quantity, mileage } = req.body;
 		const vehicle = await req.user.Driver.getVehicle();
 		if(!vehicle) return res.status(409).send({ error: "Driver doesn't have a vehicle assigned" });
 	
-		const receipt = await Receipt.create({ price, quantity, mileage, driver_id: req.user.driver_id, vehicle_id: vehicle.id });
+		await Receipt.create({ ...req.body, driver_id: req.user.driver_id, vehicle_id: vehicle.id });
 		return res.status(201).end();
 	} catch(error) {
 		console.error(error);
@@ -20,9 +19,9 @@ router.post("/", hasRole('driver'), async (req,res) => {
 });
 
 router.get("/", hasRole("admin","company"), async (req,res) => {
-	const companyId = limitCompanyScope(req) ?? req.query.companyId;
+	const company_id = limitCompanyScope(req) ?? req.query.company_id;
 	const where = {
-		...(companyId ? { company_id: companyId }:{})
+		...(company_id ? { company_id }:{})
 	};
 	try {
 		const receipts = await Receipt.findAll({

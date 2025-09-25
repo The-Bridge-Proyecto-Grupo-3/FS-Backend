@@ -7,7 +7,7 @@ module.exports = {
 			summary: 'Get all receipts',
 			security: security.jwt,
 			parameters: [
-				{ name: 'companyId', in: 'query', required: false, description: 'Company ID (only for admins)', schema: { type: 'integer' }}
+				{ name: 'company_id', in: 'query', required: false, description: 'Company ID (only for admins)', schema: { type: 'integer' }}
 			],
 			responses: {
 				200: { description: 'List of all receipts' },
