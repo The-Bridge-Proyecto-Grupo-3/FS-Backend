@@ -20,9 +20,9 @@ router.post("/", hasRole('driver'), async (req,res) => {
 });
 
 router.get("/", hasRole("admin","company"), async (req,res) => {
-	const companyId = limitCompanyScope(req);
+	const companyId = limitCompanyScope(req) ?? req.query.companyId;
 	const where = {
-		...(companyId ? { company_id: companyId ?? req.body.companyId }:{})
+		...(companyId ? { company_id: companyId }:{})
 	};
 	try {
 		const receipts = await Receipt.findAll({

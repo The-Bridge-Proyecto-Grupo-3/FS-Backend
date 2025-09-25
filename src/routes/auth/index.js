@@ -11,7 +11,7 @@ router.use('/verify', require("./verifyEmail"));
 
 router.post("/login", async (req,res) => {
 	const { email, password } = req.body;
-	const user = await User.findOne({ where: { email }, include: [Driver, Company]});
+	const user = await User.findOne({ where: { email }, include: [Driver,Company] });
 	const passwordCorrect = await bcrypt.compare(password, user?.passwordHash ?? DUMMY_PASSWORD);
 	if(!passwordCorrect | !user) return res.status(404).send({ error: "Wrong email or password" });
 	if(!user.emailVerified) return res.status(401).send({ error: "Please verify your email" });
