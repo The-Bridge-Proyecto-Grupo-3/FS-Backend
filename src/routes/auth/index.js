@@ -20,6 +20,12 @@ router.post("/login", rateLimit(600,10), rateLimit(60,5), async (req,res) => {
 	const requires2FA = user.twoFactorEnabled;
 	const token = requires2FA ? sign2FALogin(user):signLogin(user);
 
+	res.cookie('token', token, {
+		httpOnly: true,
+		secure: false,
+		sameSite: 'Lax',
+		maxAge: 3600000
+	});
 	const userResult = { ...user.Driver?.toJSON(), ...user.Company?.toJSON() };
 
 	return res.send({ requires2FA, token, ...(!requires2FA ? {role: user.role, user: userResult }:{})});
