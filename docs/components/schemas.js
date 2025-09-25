@@ -49,10 +49,10 @@ module.exports = {
 		}
 	},
 	VehicleUpdate: {
-		allOf: [
-			{ $ref: '#/components/schemas/VehicleInput'},
-			{ required: [] }
-		]
+		type: 'object',
+		properties: {
+			...vehicle
+		}
 	},
 	Login: {
 		type: 'object',
