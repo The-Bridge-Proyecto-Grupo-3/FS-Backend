@@ -1,11 +1,5 @@
 const security = require('../security');
 
-const contentError = {
-	'application/json': { 
-		schema: { $ref: '#/components/schemas/Error' }
-	}
-};
-
 module.exports = {
 	'/receipts': {
 		get: {
@@ -38,17 +32,9 @@ module.exports = {
 				}
 			},
 			responses: {
-				201: {
-					description: 'Receipt registered'
-				},
-				403: {
-					description: 'Access Forbidden: only driver can create receipts',
-					content: contentError
-				},
-				409: {
-					description: "Driver doesn't have a vehicle assigned",
-					content: contentError
-				},
+				201: { description: 'Receipt registered' },
+				403: { description: 'Access Forbidden: only driver can create receipts' },
+				409: { description: "Driver doesn't have a vehicle assigned" },
 			}
 		}
 	}
