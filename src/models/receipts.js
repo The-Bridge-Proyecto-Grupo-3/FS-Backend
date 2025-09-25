@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-	const Refuelling = sequelize.define('Refuelling', {
+	const Receipt = sequelize.define('Receipt', {
 		driver_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			primaryKey: true,
@@ -29,24 +29,16 @@ module.exports = (sequelize, DataTypes) => {
 		mileage: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: true
-		},
-		date: {
-			type: DataTypes.DATE,
-			allowNull: false
 		}
 	}, {
-		tableName: 'refuellings',
-		timestamps: false
+		tableName: 'receipts',
+		timestamps: true
 	});
 
-	Refuelling.associate = (models) => {
-		Refuelling.belongsTo(models.Driver, {
-			foreignKey: 'driver_id'
-		});
-		Refuelling.belongsTo(models.Vehicle, {
-			foreignKey: 'vehicle_id'
-		});
+	Receipt.associate = (models) => {
+		Receipt.belongsTo(models.Driver, { foreignKey: 'driver_id' });
+		Receipt.belongsTo(models.Vehicle, { foreignKey: 'vehicle_id'});
 	};
 
-	return Refuelling;
+	return Receipt;
 }

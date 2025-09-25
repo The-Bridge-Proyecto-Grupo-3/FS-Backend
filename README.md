@@ -50,3 +50,8 @@ Configurar config/nodemailer.js para que haga uso de las variables usuario y con
 ```bash
 	npm run dev
 ```
+
+
+## Swagger
+
+[http://localhost:4000/docs/](http://localhost:4000/docs/)

@@ -10,12 +10,6 @@ const driverIdSchema = {
 	}
 };
 
-const contentError = {
-	'application/json': { 
-		schema: { $ref: '#/components/schemas/Error' }
-	}
-};
-
 module.exports = {
 	'/vehicles': {
 		get: {
@@ -60,10 +54,7 @@ module.exports = {
 						}
 					}
 				},
-				403: {
-					description: 'Access Forbidden: driver cannot create vehicles',
-					content: contentError
-				},
+				403: { description: 'Access Forbidden: driver cannot create vehicles' },
 			}
 		}
 	},
@@ -84,10 +75,7 @@ module.exports = {
 						}
 					}
 				},
-				404: {
-					description: 'Vehicle not found',
-					content: contentError
-				},
+				404: { description: 'Vehicle not found' },
 			}
 		},
 		put: {
@@ -114,14 +102,8 @@ module.exports = {
 						}
 					}
 				},
-				403: {
-					description: 'Access Forbidden: driver cannot modify vehicles',
-					content: contentError
-				},
-				404: {
-					description: 'Vehicle not found',
-					content: contentError
-				},
+				403: { description: 'Access Forbidden: driver cannot modify vehicles' },
+				404: { description: 'Vehicle not found' },
 			}
 		},
 		delete: {
@@ -140,14 +122,8 @@ module.exports = {
 						}
 					}
 				},
-				403: {
-					description: 'Access Forbidden: driver cannot delete vehicles',
-					content: contentError
-				},
-				404: {
-					description: 'Vehicle not found',
-					content: contentError
-				},
+				403: { description: 'Access Forbidden: driver cannot delete vehicles' },
+				404: { description: 'Vehicle not found' },
 			}
 		}
 	},
@@ -176,18 +152,9 @@ module.exports = {
 						}
 					}
 				},
-				400: {
-					description: 'Missing driverId',
-					content: contentError
-				},
-				404: {
-					description: 'Vehicle not found',
-					content: contentError
-				},
-				409: {
-					description: 'Vehicle already assigned or driver has another vehicle',
-					content: contentError
-				},
+				400: { description: 'Missing driverId' },
+				404: { description: 'Vehicle not found' },
+				409: { description: 'Vehicle already assigned or driver has another vehicle' },
 			}
 		},
 		delete: {
@@ -206,18 +173,8 @@ module.exports = {
 						}
 					}
 				},
-				403: {
-					description: 'Access Forbidden: driver cannot remove other drivers from vehicles',
-					content: contentError
-				},
-				404: {
-					description: 'Vehicle not found',
-					content: {
-						'application/json': { 
-							schema: { $ref: '#/components/schemas/Error' }
-						}
-					}
-				},
+				403: { description: 'Access Forbidden: driver cannot remove other drivers from vehicles' },
+				404: { description: 'Vehicle not found' },
 			}
 		}
 	}

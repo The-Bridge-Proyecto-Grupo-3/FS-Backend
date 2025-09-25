@@ -3,10 +3,11 @@ const { signLogin, verify2FALogin } = require("../../utils/jwt");
 const { User } = require("../../models");
 const { generate2FASecret, verifyTOTP } = require("../../utils/totp");
 const { authenticate } = require("../../middleware/authentication");
+const rateLimit = require("../../utils/rateLimit");
 
 const router = Router();
 
-router.post('/', async (req,res) => {
+router.post('/', rateLimit(60,5), async (req,res) => {
 	const { code } = req.body;
 	const tempToken = req.headers.authorization;
 	const { payload, err } = verify2FALogin(tempToken);

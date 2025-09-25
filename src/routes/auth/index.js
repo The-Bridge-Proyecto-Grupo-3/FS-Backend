@@ -2,6 +2,7 @@ const { Router } = require("express");
 const { User, Driver, Company } = require("../../models");
 const bcrypt = require("bcrypt");
 const { signLogin, sign2FALogin } = require("../../utils/jwt");
+const rateLimit = require("../../utils/rateLimit");
 
 const router = Router();
 const DUMMY_PASSWORD = "$2a$12$VqZPYU.9rWU8KA06gqEpW.kFB5KgahB66gS/ejDdd94C6kGdyFRfe";
@@ -9,7 +10,7 @@ const DUMMY_PASSWORD = "$2a$12$VqZPYU.9rWU8KA06gqEpW.kFB5KgahB66gS/ejDdd94C6kGdy
 router.use('/2fa', require("./2fa"));
 router.use('/verify', require("./verifyEmail"));
 
-router.post("/login", async (req,res) => {
+router.post("/login", rateLimit(600,10), rateLimit(60,5), async (req,res) => {
 	const { email, password } = req.body;
 	const user = await User.findOne({ where: { email }, include: [Driver, Company]});
 	const passwordCorrect = await bcrypt.compare(password, user ? user.passwordHash:DUMMY_PASSWORD);
@@ -19,10 +20,7 @@ router.post("/login", async (req,res) => {
 	const requires2FA = user.twoFactorEnabled;
 	const token = requires2FA ? sign2FALogin(user):signLogin(user);
 
-	const userResult = {
-		...(user.Driver ? user.Driver.toJSON():{}),
-		...(user.Company ? user.Company.toJSON():{}),
-	}
+	const userResult = { ...user.Driver?.toJSON(), ...user.Company?.toJSON() };
 
 	return res.send({ requires2FA, token, role: user.role, user: userResult });
 });
