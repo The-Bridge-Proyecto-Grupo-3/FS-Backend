@@ -1,11 +1,5 @@
 const security = require('../security');
 
-const contentError = {
-	'application/json': { 
-		schema: { $ref: '#/components/schemas/Error' }
-	}
-};
-
 module.exports = {
 	'/auth/login': {
 		post: {
@@ -29,14 +23,9 @@ module.exports = {
 						}
 					}
 				},
-				401: {
-					description: 'Unauthorized: Email not verified',
-					content: contentError
-				},
-				404: {
-					description: 'Wrong credentials',
-					content: contentError
-				}
+				401: { description: 'Unauthorized: Email not verified' },
+				404: { description: 'Wrong credentials' },
+				429: { description: 'Too many requests' }
 			}
 		}
 	},
@@ -54,14 +43,8 @@ module.exports = {
 						}
 					}
 				},
-				401: {
-					description: 'Unauthorized',
-					content: contentError
-				},
-				409: {
-					description: 'Already enabled',
-					content: contentError
-				},
+				401: { description: 'Unauthorized' },
+				409: { description: 'Already enabled' },
 			}
 		},
 		post: {
@@ -77,17 +60,9 @@ module.exports = {
 				}
 			},
 			responses: {
-				204: {
-					description: '2FA enabled'
-				},
-				401: {
-					description: 'Invalid token, expired or wrong code',
-					content: contentError
-				},
-				409: {
-					description: '2FA already enabled',
-					content: contentError
-				}
+				204: { description: '2FA enabled' },
+				401: { description: 'Invalid token, expired or wrong code' },
+				409: { description: '2FA already enabled' }
 			}
 		},
 	},
@@ -107,14 +82,9 @@ module.exports = {
 						}
 					}
 				},
-				400: {
-					description: 'Missing token',
-					content: contentError
-				},
-				401: {
-					description: 'Unauthorized',
-					content: contentError
-				}
+				400: { description: 'Missing token' },
+				401: { description: 'Unauthorized' },
+				429: { description: 'Too many requests' }
 			}
 		},
 		post: {
@@ -135,9 +105,8 @@ module.exports = {
 				}
 			},
 			responses: {
-				204: {
-					description: 'Email sent or not found in DB'
-				}
+				204: { description: 'Email sent or not found in DB' },
+				429: { description: 'Too many requests' }
 			}
 		}
 	}
