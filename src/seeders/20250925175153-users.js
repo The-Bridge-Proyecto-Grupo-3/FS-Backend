@@ -23,7 +23,7 @@ module.exports = {
       email: 'admin@mail.com',
       passwordHash: passwordHash(),
       twoFactorEnabled: 1,
-      twoFactorSecret: '2LTRDGB8I8GTR19HC3ZU0OTOIF8PHH70',
+      twoFactorSecret: 'HEQUAQRPHAZEEL2BGZZW4425KZQTOORS',
       role: 'admin',
       company_id: null,
       driver_id: null,
@@ -38,7 +38,7 @@ module.exports = {
         email: `company${companyNumber}@mail.com`,
         passwordHash: passwordHash(),
         twoFactorEnabled: (i&1) ^ 1, // habilitado para empresas impares
-        twoFactorSecret: '2LTRDGB8I8GTR19HC3ZU0OTOIF8PHH70',
+        twoFactorSecret: 'HEQUAQRPHAZEEL2BGZZW4425KZQTOORS',
         role: 'company',
         company_id: company.id,
         driver_id: null,
@@ -54,7 +54,7 @@ module.exports = {
         email: `driver${driverNumber}@mail.com`,
         passwordHash: passwordHash(),
         twoFactorEnabled: (i&1) ^ 1, // habilitado para drivers impares
-        twoFactorSecret: '2LTRDGB8I8GTR19HC3ZU0OTOIF8PHH70',
+        twoFactorSecret: 'HEQUAQRPHAZEEL2BGZZW4425KZQTOORS',
         role: 'driver',
         company_id: null,
         driver_id: driver.id,
