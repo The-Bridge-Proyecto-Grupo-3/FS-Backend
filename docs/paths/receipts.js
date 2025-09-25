@@ -10,13 +10,8 @@ module.exports = {
 				{ name: 'companyId', in: 'query', required: false, description: 'Company ID (only for admins)', schema: { type: 'integer' }}
 			],
 			responses: {
-				200: {
-					description: 'List of all receipts'
-				},
-				403: {
-					description: 'Access Forbidden: only company can access receipts',
-					content: contentError
-				}
+				200: { description: 'List of all receipts' },
+				403: { description: 'Access Forbidden: only company can access receipts' }
 			}
 		},
 		post: {
