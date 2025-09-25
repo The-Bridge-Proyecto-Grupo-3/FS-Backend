@@ -4,6 +4,8 @@ const connectDB = require("./config/db");
 const morgan = require("morgan");
 const fs = require('fs');
 const path = require('path');
+const cors = require('cors');
+
 
 const app = express();
 
@@ -16,6 +18,12 @@ if(env.nodeEnv === "development") {
 
 app.use(express.json({ limit: '10kb' }));
 app.use(morgan('tiny'));
+
+app.use(cors({
+  origin: env.corsOrigin,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 const routes = ['users','auth','vehicles','receipts'];
 
