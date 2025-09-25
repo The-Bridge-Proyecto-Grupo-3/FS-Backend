@@ -3,8 +3,10 @@ const { User } = require("../../models");
 const { env } = require("../../config/env");
 const { sendMail } = require("../../config/nodemailer");
 const { verifyEmail, signEmailVerification } = require("../../utils/jwt");
+const rateLimit = require("../../utils/rateLimit");
 
 const router = Router();
+router.use(rateLimit(3600,5));
 
 router.get("/", async (req,res) => {
 	const { token } = req.query;
