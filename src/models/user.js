@@ -64,6 +64,14 @@ module.exports = (sequelize, DataTypes) => {
 			tableName: "users",
 			paranoid: true,
 			indexes: [{ unique: true, fields: ["email"] }, { fields: ["role"] }],
+			validate: {
+				validRole() {
+					if(this.role === "admin" && (this.company_id || this.driver_id)) throw new Error("Admin cannot be linked to a company or driver");
+					if(this.role === "company" && (!this.company_id || this.driver_id)) throw new Error("Company cannot be linked to a driver");
+					// driver user can be unlinked from driver when it is first created
+					if(this.role === "driver" && this.company_id) throw new Error("Driver cannot be linked to a company");
+				}
+			}
 		}
 	);
 

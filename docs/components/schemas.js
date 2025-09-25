@@ -64,8 +64,12 @@ module.exports = {
 	LoginResponse: {
 		type: 'object',
 		properties: {
-			requires2FA: { type: 'boolean' },
+			requires2FA: { 
+				type: 'boolean',
+				required: false
+			},
 			token: { type: 'string' },
+			role: { type: 'string', enum: ['admin','company','driver']},
 			user: {
 				type: 'object',
 				nullable: true,
