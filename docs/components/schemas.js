@@ -28,7 +28,8 @@ const driver = {
 const receipt = {
 	quantity: { type: 'number' },
 	price: { type: 'integer' },
-	mileage: { type: 'integer' }
+	mileage: { type: 'integer' },
+	fuel_type: { type: 'string', enum: ['95','98','glp','diesel','electric'] }
 };
 
 module.exports = {
