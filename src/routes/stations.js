@@ -1,10 +1,11 @@
 const { Router } = require('express');
-const { EVStation, Sequelize } = require('../models');
+const { EVStation, Sequelize, Sequelize: { Op } } = require('../models');
 
 const router = Router();
 
 router.get('/ev', async (req,res) => {
-	const { radius = 20, lat, lon, limit = 100 } = req.query;
+	let { radius = 20, lat, lon, limit = 100 } = req.query;
+	limit = Math.min(limit,100);
 	const Rearth = 6371;
 	try {
 		console.log(lat,lon,isNaN(+lat),isNaN(+lon));
@@ -16,6 +17,11 @@ router.get('/ev', async (req,res) => {
 				]
 			},
 			order: [['distance','ASC']],
+			having: {
+				distance: {
+					[Op.lte]: radius
+				}
+			},
 			limit: +limit
 		});
 		return res.send(stations);
