@@ -10,22 +10,17 @@ const router = Router();
 
 router.post('/', rateLimit(60,5), async (req,res) => {
 	const { code } = req.body;
-	// const tempToken = req.headers.authorization;
-	console.log(req.cookies)
 	const tempToken = req.cookies.token;
 	const { payload, err } = verify2FALogin(tempToken);
 	if(err) return res.status(401).send({ error: err });
 	
 	const user = await User.findByPk(payload.sub, { include: [Driver,Company] });
-	console.log(code,user.twoFactorSecret);
 	const valid = verifyTOTP(code, user.twoFactorSecret);
 	if(!valid) return res.status(401).send({ error: 'Invalid TOTP'});
 
 	const token = signLogin(user);
 	setCookie(res,'token',token);
-
 	const userResult = { ...user.Driver?.toJSON(), ...user.Company?.toJSON() };
-
 	return res.send({ token, role: user.role, user: userResult });
 });
 
