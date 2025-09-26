@@ -4,7 +4,7 @@ const { verifyLogin } = require('../utils/jwt');
 module.exports = {
 	authenticate: async (req,res,next) => {
 		try {
-			const token = req.headers.authorization;
+			const token = req.cookies.token;
 			const { payload, err } = verifyLogin(token);
 			if(err) return res.status(401).send({ error: err });
 			// TODO validate tokens in the DB?
