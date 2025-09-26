@@ -32,6 +32,20 @@ const receipt = {
 	fuel_type: { type: 'string', enum: ['95','98','glp','diesel','electric'] }
 };
 
+const evstation = {
+	id: { type: 'integer' },
+	operator: { type: 'string' },
+	address: { type: 'string' },
+	postal_code: { type: 'integer' },
+	state: { type: 'string' },
+	city: { type: 'string' },
+	location: { type: 'string' },
+	latitude: { type: 'number' },
+	longitude: { type: 'number' },
+	max_power: { type: 'integer' },
+	distance: { type: 'number' }
+};
+
 module.exports = {
 	Vehicle: {
 		type: 'object',
@@ -132,6 +146,12 @@ module.exports = {
 		required: Object.keys(receipt),
 		properties: {
 			...receipt
+		}
+	},
+	EVStation: {
+		type: 'object',
+		properties: {
+			...evstation
 		}
 	},
 	Error: {
