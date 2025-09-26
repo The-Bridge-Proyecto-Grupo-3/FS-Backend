@@ -51,7 +51,8 @@ module.exports = {
 						}
 					}
 				},
-				401: { description: 'Invalid token, expired or wrong code' }
+				401: { description: 'Invalid token, expired or wrong code' },
+				429: { description: 'Too many requests' }
 			}
 		},
 	},
