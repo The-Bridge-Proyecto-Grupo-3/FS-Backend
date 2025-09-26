@@ -4,6 +4,7 @@ const { User, Driver, Company } = require("../../models");
 const { generate2FASecret, verifyTOTP } = require("../../utils/totp");
 const { authenticate } = require("../../middleware/authentication");
 const rateLimit = require("../../utils/rateLimit");
+const { setCookie } = require("../../config/cookies");
 
 const router = Router();
 
@@ -21,12 +22,8 @@ router.post('/', rateLimit(60,5), async (req,res) => {
 	if(!valid) return res.status(401).send({ error: 'Invalid TOTP'});
 
 	const token = signLogin(user);
-	res.cookie('token', token, {
-		httpOnly: true,
-		secure: false,
-		sameSite: 'Lax',
-		maxAge: 3600000
-	});
+	setCookie(res,'token',token);
+
 	const userResult = { ...user.Driver?.toJSON(), ...user.Company?.toJSON() };
 
 	return res.send({ token, role: user.role, user: userResult });
