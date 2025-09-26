@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const { signLogin, sign2FALogin } = require("../../utils/jwt");
 const rateLimit = require("../../utils/rateLimit");
 const { setCookie } = require("../../config/cookies");
+const { authenticate } = require("../../middleware/authentication");
 
 const router = Router();
 const DUMMY_PASSWORD = "$2a$12$VqZPYU.9rWU8KA06gqEpW.kFB5KgahB66gS/ejDdd94C6kGdyFRfe";
@@ -34,6 +35,11 @@ router.post("/login", rateLimit(600,10), rateLimit(60,5), async (req,res) => {
 	const userResult = { ...user.Driver?.toJSON(), ...user.Company?.toJSON() };
 
 	return res.send({ requires2FA, token, ...(!requires2FA ? {role: user.role, user: userResult }:{})});
+});
+
+router.get('/info', authenticate, async (req,res) => {
+	const userResult = { ...req.user.Driver?.toJSON(), ...req.user.Company?.toJSON() };
+	return res.send({ role: req.user.role, user: userResult });
 });
 
 module.exports = router;
