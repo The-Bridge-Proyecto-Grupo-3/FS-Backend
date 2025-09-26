@@ -75,8 +75,8 @@ module.exports = {
 				type: 'object',
 				nullable: true,
 				oneOf: [
-					{ $ref: '#/components/schemas/Company'},
 					{ $ref: '#/components/schemas/Driver'},
+					{ $ref: '#/components/schemas/Company'},
 				]
 			},
 		}
@@ -110,7 +110,12 @@ module.exports = {
 		properties: {
 			id: { type: 'integer' },
 			company_id: { type: 'integer' },
-			...driver
+			...driver,
+			Vehicle: {
+				type: 'object',
+				nullable: true,
+				$ref: '#/components/schemas/Vehicle'
+			}
 		}
 	},
 	Enable2FA: {
