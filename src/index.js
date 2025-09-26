@@ -22,7 +22,7 @@ app.use(morgan('tiny'));
 app.use(cors({
   origin: env.corsOrigin,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type'],
   credentials: true
 }));
 app.use(cookieParser());
