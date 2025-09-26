@@ -36,6 +36,7 @@ async function runSeeders() {
 	await seedDrivers.down(queryInterface, Sequelize);
 	await seedVehicles.down(queryInterface, Sequelize);
 	await seedUsers.down(queryInterface, Sequelize);
+	await seedEVStations.down(queryInterface, Sequelize);
     process.exit(1);
   }
 }
