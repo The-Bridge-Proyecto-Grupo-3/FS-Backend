@@ -77,6 +77,15 @@ router.get("/", async (req,res) => {
 	}
 });
 
+router.get("/assigned", hasRole('driver'), async (req,res) => {
+	try {
+		if(req.user.role === "driver") return res.send(await req.user.Driver.getVehicle());
+	} catch (error) {
+		console.error(error);
+		return res.status(500).send({ error: "Internal Server Error" });
+	}
+});
+
 router.get("/:id", async (req,res) => {
 	const { id } = req.params;
 	const company_id = limitCompanyScope(req);

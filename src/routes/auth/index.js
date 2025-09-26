@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { User, Driver, Company } = require("../../models");
+const { User, Driver, Company, Vehicle } = require("../../models");
 const bcrypt = require("bcrypt");
 const { signLogin, sign2FALogin } = require("../../utils/jwt");
 const rateLimit = require("../../utils/rateLimit");
@@ -13,7 +13,16 @@ router.use('/verify', require("./verifyEmail"));
 
 router.post("/login", rateLimit(600,10), rateLimit(60,5), async (req,res) => {
 	const { email, password } = req.body;
-	const user = await User.findOne({ where: { email }, include: [Driver, Company]});
+	const user = await User.findOne({
+		where: { email },
+		include: [
+			{
+				model: Driver,
+				include: [Vehicle]
+			}, 
+			Company
+		]
+	});
 	const passwordCorrect = await bcrypt.compare(password, user ? user.passwordHash:DUMMY_PASSWORD);
 	if(!passwordCorrect | !user) return res.status(404).send({ error: "Wrong email or password" });
 	if(!user.emailVerified) return res.status(401).send({ error: "Please verify your email" });
