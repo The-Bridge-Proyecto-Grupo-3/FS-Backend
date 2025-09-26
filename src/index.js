@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
@@ -21,10 +22,10 @@ app.use(morgan('tiny'));
 app.use(cors({
   origin: env.corsOrigin,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type'],
+  credentials: true
 }));
-
-const routes = ['users','auth','vehicles','receipts'];
+app.use(cookieParser());
 
 fs
   .readdirSync(path.join(__dirname, 'routes'))

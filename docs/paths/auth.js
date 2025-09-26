@@ -29,6 +29,33 @@ module.exports = {
 			}
 		}
 	},
+	'/auth/2fa': {
+		post: {
+			tags: ['Auth'],
+			summary: 'Send 2FA code to finish login',
+			security: security.jwt,
+			requestBody: {
+				required: true,
+				content: {
+					'application/json': {
+						schema: { $ref: '#/components/schemas/Enable2FA' }
+					}
+				}
+			},
+			responses: {
+				200: {
+					description: '2FA enabled',
+					content: {
+						'application/json': { 
+							schema: { $ref: '#/components/schemas/LoginResponse' }
+						}
+					}
+				},
+				401: { description: 'Invalid token, expired or wrong code' },
+				429: { description: 'Too many requests' }
+			}
+		},
+	},
 	'/auth/2fa/enable': {
 		get: {
 			tags: ['Auth'],

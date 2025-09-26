@@ -21,6 +21,11 @@ module.exports = {
 	},
 	bcryptRounds: process.env.BCRYPT_ROUNDS ?? 12,
 	corsOrigin: process.env.CORS_ORIGIN,
+	cookie: {
+		sameSite: process.env.COOKIE_SAME_SITE ?? "Strict",
+		secure:  (process.env.COOKIE_SECURE ?? "true") == "true",
+		age: process.env.COOKIE_AGE
+	},
 	appBaseUrl: process.env.APP_BASE_URL ?? "http://localhost:4000",
 	smtp: {
 		host: process.env.SMTP_HOST,
