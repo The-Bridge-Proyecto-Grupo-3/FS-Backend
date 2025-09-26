@@ -16,7 +16,7 @@ router.get('/ev', async (req,res) => {
 				]
 			},
 			order: [['distance','ASC']],
-			limit
+			limit: +limit
 		});
 		return res.send(stations);
 	} catch (error) {
