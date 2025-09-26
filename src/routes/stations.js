@@ -8,8 +8,8 @@ router.get('/ev', async (req,res) => {
 	limit = Math.min(limit,100);
 	const Rearth = 6371;
 	try {
-		console.log(lat,lon,isNaN(+lat),isNaN(+lon));
-		if(isNaN(+lat) || isNaN(+lon) || isNaN(+radius)) return res.status(400).send({ error: 'Invalid query'});
+		if(!lat || !lon) return res.status(400).send({ error: 'lat and lon are required' });
+		if(isNaN(+lat) || isNaN(+lon) || isNaN(+radius) || isNaN(+limit)) return res.status(400).send({ error: 'Invalid query'});
 		const stations = await EVStation.findAll({
 			attributes: {
 				include: [
