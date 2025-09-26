@@ -12,6 +12,9 @@ async function runSeeders() {
   await connectDB(); // Connect and sync DB
   const queryInterface = sequelize.getQueryInterface();
 
+  const seedEVStations = require('./seeders/20250926233745-evstations');
+  await seedEVStations.up(queryInterface, Sequelize);
+
   try {
     console.log('⏳ Seeding companies...');
     await seedCompanies.up(queryInterface, Sequelize);
