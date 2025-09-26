@@ -28,6 +28,8 @@ module.exports = {
       role: 'admin',
       company_id: null,
       driver_id: null,
+      emailVerified: 1,
+      emailVerifiedAt: new Date(),
       createdAt: new Date(),
       updatedAt: new Date()
     });
@@ -44,6 +46,8 @@ module.exports = {
         role: 'company',
         company_id: company.id,
         driver_id: null,
+        emailVerified: 1,
+        emailVerifiedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date()
       });
@@ -61,6 +65,8 @@ module.exports = {
         role: 'driver',
         company_id: null,
         driver_id: driver.id,
+        emailVerified: 1,
+        emailVerifiedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date()
       });
