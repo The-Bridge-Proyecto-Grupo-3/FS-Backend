@@ -37,5 +37,6 @@ module.exports = {
 	mail: {
 		from: process.env.MAIL_FROM ?? "no-reply@example.com",
 		logging: process.env.NODEMAILER_LOGGING === "true",
+		sendVerification: process.env.EMAIL_SEND === "true"
 	},
 };
