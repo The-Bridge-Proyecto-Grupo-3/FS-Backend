@@ -1,15 +1,16 @@
 const { Router } = require('express');
 const { EVStation, Sequelize, Sequelize: { Op } } = require('../models');
+const { BadRequestError } = require('../errors/httpErrors');
 
 const router = Router();
 
-router.get('/ev', async (req,res) => {
+router.get('/ev', async (req,res,next) => {
 	let { radius = 20, lat, lon, limit = 100 } = req.query;
 	limit = Math.min(limit,100);
 	const Rearth = 6371;
 	try {
-		if(!lat || !lon) return res.status(400).send({ error: 'lat and lon are required' });
-		if(isNaN(+lat) || isNaN(+lon) || isNaN(+radius) || isNaN(+limit)) return res.status(400).send({ error: 'Invalid query'});
+		if(!lat || !lon) throw new BadRequestError('Introduce latitud y longitud');
+		if(isNaN(+lat) || isNaN(+lon) || isNaN(+radius) || isNaN(+limit)) throw new BadRequestError('Consulta invalida');
 		const stations = await EVStation.findAll({
 			attributes: {
 				include: [
@@ -26,8 +27,7 @@ router.get('/ev', async (req,res) => {
 		});
 		return res.send(stations);
 	} catch (error) {
-		console.error(error);
-		return res.status(500).send({ error: 'Internal Server Error' });
+		next(error);
 	}
 });
 

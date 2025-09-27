@@ -4,10 +4,11 @@ const bcrypt = require('bcrypt');
 const env = require('../config/env');
 const { sendMail } = require('../config/nodemailer');
 const { signEmailVerification } = require('../utils/jwt');
+const { limitCompanyScope, authenticate, hasRole } = require('../middleware/authentication');
 
 const router = Router();
 
-router.post('/', async (req,res) => {
+router.post('/', async (req,res,next) => {
 	const { email, password, ...companyData } = req.body;
 	const emailSent = env.mail.sendVerification;
 
@@ -31,8 +32,27 @@ router.post('/', async (req,res) => {
 
 		return res.status(201).send({ emailSent });
 	} catch (error) {
-		console.error(error);
-		return res.status(500).send({ error: 'Internal Server Error' });
+		next(error);
+	}
+});
+
+router.get('/', authenticate, hasRole('admin'), async (req,res,next) => {
+	try {
+		const companies = await Company.findAll();
+		return res.send(companies);
+	} catch (error) {
+		next(error);
+	}
+});
+
+router.get('/:id', authenticate, hasRole('admin'), async (req,res,next) => {
+	try {
+		const { id } = req.params;
+		const company = await Company.findByPk(id);
+		if(!company) throw new NotFoundError('Empresa no encontrada');
+		return res.send(company);
+	} catch (error) {
+		next(error);
 	}
 });
 

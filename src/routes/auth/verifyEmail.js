@@ -4,18 +4,23 @@ const { env } = require("../../config/env");
 const { sendMail } = require("../../config/nodemailer");
 const { verifyEmail, signEmailVerification } = require("../../utils/jwt");
 const rateLimit = require("../../utils/rateLimit");
+const { BadRequestError, UnauthorizedError, ConflictError } = require('../../errors/httpErrors');
 
 const router = Router();
 router.use(rateLimit(3600,5));
 
-router.get("/", async (req,res) => {
-	const { token } = req.query;
-	if(!token) return res.status(400).send({ error: "Missing token"});
-	const { payload, err } = verifyEmail(token);
-	if(err) return res.status(401).send({ error: err });
-
-	await User.update({ emailVerified: true, emailVerifiedAt: new Date()}, { where: { id: payload.sub, emailVerified: false }});
-	return res.status(204).end();
+router.get("/", async (req,res,next) => {
+	try {
+		const { token } = req.query;
+		if(!token) throw new BadRequestError("Missing token");
+		const { payload, err } = verifyEmail(token);
+		if(err) throw new UnauthorizedError(err);
+	
+		await User.update({ emailVerified: true, emailVerifiedAt: new Date()}, { where: { id: payload.sub, emailVerified: false }});
+		return res.status(204).end();
+	} catch (error) {
+		next(error);
+	}
 });
 
 router.post("/", async (req,res) => {

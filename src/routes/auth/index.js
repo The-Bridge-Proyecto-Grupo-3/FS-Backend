@@ -5,6 +5,7 @@ const { signLogin, sign2FALogin } = require("../../utils/jwt");
 const rateLimit = require("../../utils/rateLimit");
 const { setCookie } = require("../../config/cookies");
 const { authenticate } = require("../../middleware/authentication");
+const { NotFoundError, UnauthorizedError } = require('../../errors/httpErrors');
 
 const router = Router();
 const DUMMY_PASSWORD = "$2a$12$VqZPYU.9rWU8KA06gqEpW.kFB5KgahB66gS/ejDdd94C6kGdyFRfe";
@@ -12,29 +13,33 @@ const DUMMY_PASSWORD = "$2a$12$VqZPYU.9rWU8KA06gqEpW.kFB5KgahB66gS/ejDdd94C6kGdy
 router.use('/2fa', require("./2fa"));
 router.use('/verify', require("./verifyEmail"));
 
-router.post("/login", rateLimit(600,10), rateLimit(60,5), async (req,res) => {
-	const { email, password } = req.body;
-	const user = await User.findOne({
-		where: { email },
-		include: [
-			{
-				model: Driver,
-				include: [Vehicle]
-			}, 
-			Company
-		]
-	});
-	const passwordCorrect = await bcrypt.compare(password, user ? user.passwordHash:DUMMY_PASSWORD);
-	if(!passwordCorrect | !user) return res.status(404).send({ error: "Wrong email or password" });
-	if(!user.emailVerified) return res.status(401).send({ error: "Please verify your email" });
-
-	const requires2FA = user.twoFactorEnabled;
-	const token = requires2FA ? sign2FALogin(user):signLogin(user);
-	setCookie(res,'token',token);
-
-	const userResult = { ...user.Driver?.toJSON(), ...user.Company?.toJSON() };
-
-	return res.send({ requires2FA, ...(!requires2FA ? {role: user.role, user: userResult }:{})});
+router.post("/login", rateLimit(600,10), rateLimit(60,5), async (req,res,next) => {
+	try {
+		const { email, password } = req.body;
+		const user = await User.findOne({
+			where: { email },
+			include: [
+				{
+					model: Driver,
+					include: [Vehicle]
+				}, 
+				Company
+			]
+		});
+		const passwordCorrect = await bcrypt.compare(password, user ? user.passwordHash:DUMMY_PASSWORD);
+		if(!passwordCorrect | !user) throw new NotFoundError("Wrong email or password");
+		if(!user.emailVerified) throw new UnauthorizedError("Please verify your email");
+	
+		const requires2FA = user.twoFactorEnabled;
+		const token = requires2FA ? sign2FALogin(user):signLogin(user);
+		setCookie(res,'token',token);
+	
+		const userResult = { ...user.Driver?.toJSON(), ...user.Company?.toJSON() };
+	
+		return res.send({ requires2FA, ...(!requires2FA ? {role: user.role, user: userResult }:{})});
+	} catch (error) {
+		next(error);
+	}
 });
 
 router.post('/logout', (req,res) => {

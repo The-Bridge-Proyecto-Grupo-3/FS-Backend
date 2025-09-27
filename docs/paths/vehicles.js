@@ -177,5 +177,24 @@ module.exports = {
 				404: { description: 'Vehicle not found' },
 			}
 		}
+	},
+	'/vehicles/assigned': {
+		get: {
+			tags: ['Vehicles'],
+			summary: 'Get a driver\'s assigned vehicle',
+			security: security.jwt,
+			responses: {
+				200: {
+					description: 'Information of vehicle assigned to driver',
+					content: {
+						'application/json': { 
+							schema: { $ref: '#/components/schemas/Vehicle' }
+						}
+					}
+				},
+				403: { description: 'Access Forbidden: only driver role' },
+				404: { description: 'Vehicle not found' },
+			}
+		}
 	}
 }

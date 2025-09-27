@@ -1,12 +1,13 @@
 const { User, Company, Driver, Vehicle } = require('../models');
 const { verifyLogin } = require('../utils/jwt');
+const { UnauthorizedError, ForbiddenError, InternalSeverError } = require('../errors/httpErrors');
 
 module.exports = {
 	authenticate: async (req,res,next) => {
 		try {
 			const token = req.cookies.token;
 			const { payload, err } = verifyLogin(token);
-			if(err) return res.status(401).send({ error: err });
+			if(err) throw new UnauthorizedError(err);
 			// TODO validate tokens in the DB?
 			req.user = await User.findByPk(payload.sub, {
 				include: [
@@ -16,13 +17,12 @@ module.exports = {
 			});
 			next();
 		} catch (error) {
-			console.log(error);
-			return res.status(500).send({ error: "Internal Server Error" });
+			next(error);
 		}
 	},
 	hasRole: (...roles) => async (req,res,next) => {
-		if(!req.user) return res.status(500).send({ error: "Internal Server Error: Missing authentication."});
-		if(!roles.includes(req.user.role)) return res.status(403).send({ error: `Access Forbidden: Allowed roles: ${roles.join(', ')}`});
+		if(!req.user) next(new InternalSeverError("Falta autenticación."));
+		if(!roles.includes(req.user.role)) next(new ForbiddenError(`Roles permitidos: ${roles.join(', ')}`));
 		next();
 	},
 	limitCompanyScope: (req) => {
@@ -30,6 +30,6 @@ module.exports = {
 		if(role==="admin") return null;
 		if(role==="company") return req.user.company_id;
 		if(role==="driver") return req.user.Driver.company_id;
-		throw new Error('Role not implemented');
+		throw new InternalSeverError('Role not implemented');
 	}
 }
