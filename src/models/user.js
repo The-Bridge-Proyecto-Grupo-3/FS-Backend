@@ -14,8 +14,7 @@ module.exports = (sequelize, DataTypes) => {
 			},
 			role: {
 				type: DataTypes.ENUM("admin","company","driver"),
-				allowNull: false,
-				defaultValue: "company",
+				allowNull: false
 			},
 			company_id: {
 				type: DataTypes.INTEGER.UNSIGNED,
