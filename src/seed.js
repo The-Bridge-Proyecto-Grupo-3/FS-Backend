@@ -13,7 +13,8 @@ async function runSeeders() {
   await connectDB(); // Connect and sync DB
   const queryInterface = sequelize.getQueryInterface();
 
-  
+  await deleteAll(queryInterface);
+
   try {
     console.log('⏳ Seeding EV stations...');
 	await seedEVStations.up(queryInterface, Sequelize);
@@ -33,13 +34,17 @@ async function runSeeders() {
     console.log('✅ All seeders ran successfully.');
   } catch (err) {
     console.error('❌ Seeding error:', err.message);
+	await deleteAll(queryInterface);
+    process.exit(1);
+  }
+}
+
+async function deleteAll(queryInterface) {
 	await seedCompanies.down(queryInterface, Sequelize);
 	await seedDrivers.down(queryInterface, Sequelize);
 	await seedVehicles.down(queryInterface, Sequelize);
 	await seedUsers.down(queryInterface, Sequelize);
 	await seedEVStations.down(queryInterface, Sequelize);
-    process.exit(1);
-  }
 }
 
 runSeeders();
