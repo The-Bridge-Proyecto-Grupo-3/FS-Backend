@@ -69,7 +69,6 @@ module.exports = {
 				type: 'boolean',
 				required: false
 			},
-			token: { type: 'string' },
 			role: { type: 'string', enum: ['admin','company','driver']},
 			user: {
 				type: 'object',
