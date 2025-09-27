@@ -28,6 +28,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "dependencies": {
+    "@sequelize/postgres": "^7.0.0-alpha.46",
     "bcrypt": "6.0.0",
     "cookie-parser": "1.4.7",
     "cors": "2.8.5",

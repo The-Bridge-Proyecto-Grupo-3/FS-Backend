@@ -7,12 +7,14 @@ const basename = path.basename(__filename);
 const env = require('../config/env.js');
 const db = {};
 
+const sslOptions = env.db.ssl ? { ssl: { require: true, rejectUnauthorized: false } }:{};
+
 let sequelize = new Sequelize(env.db.name, env.db.user, env.db.pass, {
   host: env.db.host,
   port: env.db.port,
   dialect: env.db.dialect,
   logging: env.db.logging,
-  dialectOptions: { multipleStatements: false },
+  dialectOptions: sslOptions
 });
 
 fs
