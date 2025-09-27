@@ -6,7 +6,7 @@ module.exports = async function connectDB() {
     await sequelize.sync();
     console.log("✔ DB conectada");
   } catch (error) {
-    console.error("❌ Error DB:", error.message);
+    console.error("❌ Error DB:", error);
     process.exit();
   }
 }
