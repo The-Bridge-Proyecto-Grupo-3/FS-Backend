@@ -37,6 +37,11 @@ router.post("/login", rateLimit(600,10), rateLimit(60,5), async (req,res) => {
 	return res.send({ requires2FA, token, ...(!requires2FA ? {role: user.role, user: userResult }:{})});
 });
 
+router.post('/logout', (req,res) => {
+	res.clearCookie('token');
+	res.end();
+});
+
 router.get('/info', authenticate, async (req,res) => {
 	const userResult = { ...req.user.Driver?.toJSON(), ...req.user.Company?.toJSON() };
 	return res.send({ role: req.user.role, user: userResult });
