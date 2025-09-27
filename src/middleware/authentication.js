@@ -1,4 +1,4 @@
-const { User, Company, Driver } = require('../models');
+const { User, Company, Driver, Vehicle } = require('../models');
 const { verifyLogin } = require('../utils/jwt');
 
 module.exports = {
@@ -8,7 +8,12 @@ module.exports = {
 			const { payload, err } = verifyLogin(token);
 			if(err) return res.status(401).send({ error: err });
 			// TODO validate tokens in the DB?
-			req.user = await User.findByPk(payload.sub, { include: [Company, Driver] });
+			req.user = await User.findByPk(payload.sub, {
+				include: [
+					Company,
+					{ model:Driver, include:[Vehicle]}
+				]
+			});
 			next();
 		} catch (error) {
 			console.log(error);

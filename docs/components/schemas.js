@@ -32,6 +32,20 @@ const receipt = {
 	fuel_type: { type: 'string', enum: ['95','98','glp','diesel','electric'] }
 };
 
+const evstation = {
+	id: { type: 'integer' },
+	operator: { type: 'string' },
+	address: { type: 'string' },
+	postal_code: { type: 'integer' },
+	state: { type: 'string' },
+	city: { type: 'string' },
+	location: { type: 'string' },
+	latitude: { type: 'number' },
+	longitude: { type: 'number' },
+	max_power: { type: 'integer' },
+	distance: { type: 'number' }
+};
+
 module.exports = {
 	Vehicle: {
 		type: 'object',
@@ -69,14 +83,13 @@ module.exports = {
 				type: 'boolean',
 				required: false
 			},
-			token: { type: 'string' },
 			role: { type: 'string', enum: ['admin','company','driver']},
 			user: {
 				type: 'object',
 				nullable: true,
 				oneOf: [
-					{ $ref: '#/components/schemas/Company'},
 					{ $ref: '#/components/schemas/Driver'},
+					{ $ref: '#/components/schemas/Company'},
 				]
 			},
 		}
@@ -110,7 +123,12 @@ module.exports = {
 		properties: {
 			id: { type: 'integer' },
 			company_id: { type: 'integer' },
-			...driver
+			...driver,
+			Vehicle: {
+				type: 'object',
+				nullable: true,
+				$ref: '#/components/schemas/Vehicle'
+			}
 		}
 	},
 	Enable2FA: {
@@ -132,6 +150,12 @@ module.exports = {
 		required: Object.keys(receipt),
 		properties: {
 			...receipt
+		}
+	},
+	EVStation: {
+		type: 'object',
+		properties: {
+			...evstation
 		}
 	},
 	Error: {

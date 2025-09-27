@@ -23,6 +23,7 @@
   "homepage": "https://github.com/The-Bridge-Proyecto-Grupo-3/FS-Backend#readme",
   "description": "",
   "devDependencies": {
+    "csv-parse": "^6.1.0",
     "nodemon": "3.1.10",
     "swagger-ui-express": "^5.0.1"
   },

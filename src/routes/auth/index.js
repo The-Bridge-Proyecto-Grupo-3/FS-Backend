@@ -1,9 +1,10 @@
 const { Router } = require("express");
-const { User, Driver, Company } = require("../../models");
+const { User, Driver, Company, Vehicle } = require("../../models");
 const bcrypt = require("bcrypt");
 const { signLogin, sign2FALogin } = require("../../utils/jwt");
 const rateLimit = require("../../utils/rateLimit");
 const { setCookie } = require("../../config/cookies");
+const { authenticate } = require("../../middleware/authentication");
 
 const router = Router();
 const DUMMY_PASSWORD = "$2a$12$VqZPYU.9rWU8KA06gqEpW.kFB5KgahB66gS/ejDdd94C6kGdyFRfe";
@@ -13,7 +14,16 @@ router.use('/verify', require("./verifyEmail"));
 
 router.post("/login", rateLimit(600,10), rateLimit(60,5), async (req,res) => {
 	const { email, password } = req.body;
-	const user = await User.findOne({ where: { email }, include: [Driver, Company]});
+	const user = await User.findOne({
+		where: { email },
+		include: [
+			{
+				model: Driver,
+				include: [Vehicle]
+			}, 
+			Company
+		]
+	});
 	const passwordCorrect = await bcrypt.compare(password, user ? user.passwordHash:DUMMY_PASSWORD);
 	if(!passwordCorrect | !user) return res.status(404).send({ error: "Wrong email or password" });
 	if(!user.emailVerified) return res.status(401).send({ error: "Please verify your email" });
@@ -24,7 +34,17 @@ router.post("/login", rateLimit(600,10), rateLimit(60,5), async (req,res) => {
 
 	const userResult = { ...user.Driver?.toJSON(), ...user.Company?.toJSON() };
 
-	return res.send({ requires2FA, token, ...(!requires2FA ? {role: user.role, user: userResult }:{})});
+	return res.send({ requires2FA, ...(!requires2FA ? {role: user.role, user: userResult }:{})});
+});
+
+router.post('/logout', (req,res) => {
+	res.clearCookie('token');
+	res.end();
+});
+
+router.get('/info', authenticate, async (req,res) => {
+	const userResult = { ...req.user.Driver?.toJSON(), ...req.user.Company?.toJSON() };
+	return res.send({ role: req.user.role, user: userResult });
 });
 
 module.exports = router;

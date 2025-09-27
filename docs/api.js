@@ -16,6 +16,7 @@ module.exports = {
 		{ name: 'Companies' },
 		{ name: 'Drivers' },
 		{ name: 'Receipts' },
+		{ name: 'Stations' },
 		{ name: 'Vehicles' },
 	],
 	paths: {
@@ -23,6 +24,7 @@ module.exports = {
 		...require('./paths/drivers'),
 		...require('./paths/companies'),
 		...require('./paths/receipts'),
+		...require('./paths/stations'),
 		...require('./paths/vehicles'),
 	},
 	components: {
