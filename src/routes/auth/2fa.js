@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const { signLogin, verify2FALogin } = require("../../utils/jwt");
-const { User, Driver, Company } = require("../../models");
+const { User, Driver, Company, Vehicle } = require("../../models");
 const { generate2FASecret, verifyTOTP } = require("../../utils/totp");
 const { authenticate } = require("../../middleware/authentication");
 const rateLimit = require("../../utils/rateLimit");
@@ -14,7 +14,15 @@ router.post('/', rateLimit(60,5), async (req,res) => {
 	const { payload, err } = verify2FALogin(tempToken);
 	if(err) return res.status(401).send({ error: err });
 	
-	const user = await User.findByPk(payload.sub, { include: [Driver,Company] });
+	const user = await User.findByPk(payload.sub, {
+		include: [
+			{
+				model: Driver,
+				include: [Vehicle]
+			},
+			Company
+		]
+	});
 	const valid = verifyTOTP(code, user.twoFactorSecret);
 	if(!valid) return res.status(401).send({ error: 'Invalid TOTP'});
 
