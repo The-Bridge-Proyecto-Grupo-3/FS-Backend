@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const env = require('../config/env');
 const { sendMail } = require('../config/nodemailer');
 const { signEmailVerification } = require('../utils/jwt');
-const { hasRole, authenticate } = require('../middleware/authentication');
+const { hasRole, authenticate, limitCompanyScope } = require('../middleware/authentication');
 
 const router = Router();
 
@@ -31,6 +31,32 @@ router.post('/', authenticate, hasRole('company'), async (req,res,next) => {
 		}
 
 		return res.status(201).send({ emailSent });
+	} catch (error) {
+		next(error);
+	}
+});
+
+router.get('/', authenticate, hasRole('admin','company'), async (req,res,next) => {
+	try {
+		const company_id = limitCompanyScope(req);
+		const drivers = await Driver.findAll({ where: { ...(company_id ? {company_id}:{})}});
+		return res.send(drivers);
+	} catch (error) {
+		next(error);
+	}
+});
+
+router.get('/:id', authenticate, hasRole('admin','company'), async (req,res,next) => {
+	try {
+		const { id } = req.params;
+		const company_id = limitCompanyScope(req);
+		const driver = await Driver.findOne({
+			where: {
+				id,
+				...(company_id ? {company_id}:{})
+			}
+		});
+		return res.send(driver);
 	} catch (error) {
 		next(error);
 	}

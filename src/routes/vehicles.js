@@ -58,10 +58,10 @@ router.delete("/:id", hasRole("admin","company"), async (req,res,next) => {
 
 router.get("/", async (req,res,next) => {
 	const { available } = req.query; // return only unused vehicles
-	const company_id = limitCompanyScope(req);
+	const company_id = limitCompanyScope(req) ?? req.query.company_id;
 	try {
 		const vehicles = await Vehicle.findAll({ where: {
-			company_id, 
+			...(company_id ? {company_id}:{}),
 			...(available === "true" ? {
 				in_use_by: {
 					[Op.is]: null
