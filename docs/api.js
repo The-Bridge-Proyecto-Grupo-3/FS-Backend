@@ -9,7 +9,7 @@ module.exports = {
 		description: 'Documentación de la API para administración de empresas, conductores y vehículos'
 	},
 	servers: [
-		{ url: env.appBaseUrl }
+		{ url: '/' }
 	],
 	tags: [
 		{ name: 'Auth' },
