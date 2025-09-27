@@ -75,7 +75,7 @@ router.get("/", async (req,res,next) => {
 });
 
 router.get("/assigned", hasRole('driver'), async (req,res,next) => {
-	try {
+	try { // useless
 		if(req.user.role === "driver") return res.send(await req.user.Driver.getVehicle());
 	} catch (error) {
 		next(error);
