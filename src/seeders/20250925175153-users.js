@@ -22,13 +22,13 @@ module.exports = {
     users.push({
       email: 'admin@mail.com',
       passwordHash: passwordHash(),
-      twoFactorEnabled: 1,
+      twoFactorEnabled: true,
       twoFactorSecret: 'HEQUAQRPHAZEEL2BGZZW4425KZQTOORS',
-      emailVerified: 1,
+      emailVerified: true,
       role: 'admin',
       company_id: null,
       driver_id: null,
-      emailVerified: 1,
+      emailVerified: true,
       emailVerifiedAt: new Date(),
       createdAt: new Date(),
       updatedAt: new Date()
@@ -40,13 +40,13 @@ module.exports = {
       users.push({
         email: `company${companyNumber}@mail.com`,
         passwordHash: passwordHash(),
-        twoFactorEnabled: (i&1) ^ 1, // habilitado para empresas impares
+        twoFactorEnabled: (i&1) == 0, // habilitado para empresas impares
         twoFactorSecret: 'HEQUAQRPHAZEEL2BGZZW4425KZQTOORS',
-        emailVerified: 1,
+        emailVerified: true,
         role: 'company',
         company_id: company.id,
         driver_id: null,
-        emailVerified: 1,
+        emailVerified: true,
         emailVerifiedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date()
@@ -59,13 +59,13 @@ module.exports = {
       users.push({
         email: `driver${driverNumber}@mail.com`,
         passwordHash: passwordHash(),
-        twoFactorEnabled: (i&1) ^ 1, // habilitado para drivers impares
+        twoFactorEnabled: (i&1) == 0, // habilitado para drivers impares
         twoFactorSecret: 'HEQUAQRPHAZEEL2BGZZW4425KZQTOORS',
-        emailVerified: 1,
+        emailVerified: true,
         role: 'driver',
         company_id: null,
         driver_id: driver.id,
-        emailVerified: 1,
+        emailVerified: true,
         emailVerifiedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date()
