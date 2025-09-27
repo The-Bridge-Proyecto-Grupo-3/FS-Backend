@@ -49,6 +49,7 @@ router.get('/:id', authenticate, hasRole('admin'), async (req,res,next) => {
 	try {
 		const { id } = req.params;
 		const company = await Company.findByPk(id);
+		if(!company) throw new NotFoundError('Empresa no encontrada');
 		return res.send(company);
 	} catch (error) {
 		next(error);

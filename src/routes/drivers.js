@@ -56,6 +56,7 @@ router.get('/:id', authenticate, hasRole('admin','company'), async (req,res,next
 				...(company_id ? {company_id}:{})
 			}
 		});
+		if(!driver) throw new NotFoundError('Conductor no encontrado');
 		return res.send(driver);
 	} catch (error) {
 		next(error);
