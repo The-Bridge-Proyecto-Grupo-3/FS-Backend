@@ -34,7 +34,7 @@ router.post("/login", rateLimit(600,10), rateLimit(60,5), async (req,res) => {
 
 	const userResult = { ...user.Driver?.toJSON(), ...user.Company?.toJSON() };
 
-	return res.send({ requires2FA, token, ...(!requires2FA ? {role: user.role, user: userResult }:{})});
+	return res.send({ requires2FA, ...(!requires2FA ? {role: user.role, user: userResult }:{})});
 });
 
 router.post('/logout', (req,res) => {

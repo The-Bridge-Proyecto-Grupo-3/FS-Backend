@@ -29,7 +29,7 @@ router.post('/', rateLimit(60,5), async (req,res) => {
 	const token = signLogin(user);
 	setCookie(res,'token',token);
 	const userResult = { ...user.Driver?.toJSON(), ...user.Company?.toJSON() };
-	return res.send({ token, role: user.role, user: userResult });
+	return res.send({ role: user.role, user: userResult });
 });
 
 router.get('/enable', authenticate, async (req,res) => {
