@@ -7,7 +7,7 @@ const { signEmailVerification } = require('../utils/jwt');
 
 const router = Router();
 
-router.post('/', async (req,res) => {
+router.post('/', async (req,res,next) => {
 	const { email, password, ...companyData } = req.body;
 	const emailSent = env.mail.sendVerification;
 
@@ -31,8 +31,7 @@ router.post('/', async (req,res) => {
 
 		return res.status(201).send({ emailSent });
 	} catch (error) {
-		console.error(error);
-		return res.status(500).send({ error: 'Internal Server Error' });
+		next(error);
 	}
 });
 

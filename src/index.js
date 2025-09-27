@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 
+// Swagger
 if(env.nodeEnv === "development") {
   const swaggerUi = require("swagger-ui-express");
   const apiSpec = require('../docs/api');
@@ -17,8 +18,9 @@ if(env.nodeEnv === "development") {
 }
 
 app.use(express.json({ limit: '10kb' }));
-app.use(morgan('tiny'));
+app.use(morgan('tiny')); // Request logger
 
+// CORS policy
 app.use(cors({
   origin: env.corsOrigin,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -27,6 +29,7 @@ app.use(cors({
 }));
 app.use(cookieParser());
 
+// Dynamic loading of routes
 fs
   .readdirSync(path.join(__dirname, 'routes'))
   .forEach(file => {
@@ -36,6 +39,8 @@ fs
       throw new Error(`Undefined router: /${route}`);
     app.use(`/${route}`, routeImport);
   });
+
+app.use(require('./middleware/errorHandler'));
 
 (async () => {
   await connectDB();

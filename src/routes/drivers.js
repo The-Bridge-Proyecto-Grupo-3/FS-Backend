@@ -8,7 +8,7 @@ const { hasRole, authenticate } = require('../middleware/authentication');
 
 const router = Router();
 
-router.post('/', authenticate, hasRole('company'), async (req,res) => {
+router.post('/', authenticate, hasRole('company'), async (req,res,next) => {
 	const { email, password, ...driverData } = req.body;
 	const emailSent = env.mail.sendVerification;
 
@@ -32,8 +32,7 @@ router.post('/', authenticate, hasRole('company'), async (req,res) => {
 
 		return res.status(201).send({ emailSent });
 	} catch (error) {
-		console.error(error);
-		return res.status(500).send({ error: 'Internal Server Error' });
+		next(error);
 	}
 });
 

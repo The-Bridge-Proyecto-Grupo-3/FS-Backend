@@ -1,24 +1,24 @@
 const { Router } = require("express");
 const { authenticate, hasRole, limitCompanyScope } = require("../middleware/authentication");
 const { Receipt, Driver, Vehicle } = require("../models");
+const { ConflictError } = require('../errors/httpErrors');
 
 const router = Router();
 router.use(authenticate);
 
-router.post("/", hasRole('driver'), async (req,res) => {
+router.post("/", hasRole('driver'), async (req,res,next) => {
 	try {
 		const vehicle = await req.user.Driver.getVehicle();
-		if(!vehicle) return res.status(409).send({ error: "Driver doesn't have a vehicle assigned" });
+		if(!vehicle) throw new ConflictError("Driver doesn't have a vehicle assigned");
 	
 		await Receipt.create({ ...req.body, driver_id: req.user.driver_id, vehicle_id: vehicle.id });
 		return res.status(201).end();
 	} catch(error) {
-		console.error(error);
-		return res.status(500).send({ error: "Internal Server Error" });
+		next(error);
 	}
 });
 
-router.get("/", hasRole("admin","company"), async (req,res) => {
+router.get("/", hasRole("admin","company"), async (req,res,next) => {
 	const company_id = limitCompanyScope(req) ?? req.query.company_id;
 	const where = {
 		...(company_id ? { company_id }:{})
@@ -33,8 +33,7 @@ router.get("/", hasRole("admin","company"), async (req,res) => {
 		});
 		return res.send(receipts);
 	} catch (error) {
-		console.error(error);
-		return res.status(500).send({ error: "Internal Server Error" });
+		next(error);
 	}
 })
 

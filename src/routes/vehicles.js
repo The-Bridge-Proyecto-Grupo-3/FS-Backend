@@ -1,24 +1,24 @@
 const { Router } = require("express");
 const { authenticate, hasRole, limitCompanyScope } = require("../middleware/authentication");
 const { Vehicle, Driver, Sequelize: { Op } } = require("../models");
+const { BadRequestError, ForbiddenError, NotFoundError, ConflictError } = require('../errors/httpErrors');
 
 const router = Router();
 
 router.use(authenticate);
 
-router.post("/", hasRole("admin","company"), async (req,res) => {
+router.post("/", hasRole("admin","company"), async (req,res,next) => {
 	try {
 		const company_id = limitCompanyScope(req) ?? req.body?.company_id;
-		if(!company_id) return res.status(400).send({ error: 'Missing company_id' });
+		if(!company_id) throw new BadRequestError('Falta company_id');
 		const vehicle = await Vehicle.create({ ...req.body, company_id, in_use_by: null });
 		return res.status(201).send(vehicle);
 	} catch (error) {
-		console.log(error);
-		return res.status(500).send({ error: "Internal Server Error" });
+		next(error);
 	}
 });
 
-router.put("/:id", hasRole("admin","company"), async (req,res) => {
+router.put("/:id", hasRole("admin","company"), async (req,res,next) => {
 	const { id } = req.params;
 	try {
 		const company_id = limitCompanyScope(req);
@@ -29,17 +29,16 @@ router.put("/:id", hasRole("admin","company"), async (req,res) => {
 			},
 			fields: ['brand','model','license_plate','registration_date','type']
 		});
-		if(!found) return res.status(404).send({ error: "Vehicle not found" });
+		if(!found) throw new NotFoundError("Vehículo no encontrado");
 
 		const vehicle = await Vehicle.findByPk(id);
 		return res.status(200).send(vehicle);
 	} catch (error) {
-		console.log(error);
-		return res.status(500).send({ error: "Internal Server Error" });
+		next(error);
 	}
 });
 
-router.delete("/:id", hasRole("admin","company"), async (req,res) => {
+router.delete("/:id", hasRole("admin","company"), async (req,res,next) => {
 	const { id } = req.params;
 	try {
 		const company_id = limitCompanyScope(req);
@@ -49,16 +48,15 @@ router.delete("/:id", hasRole("admin","company"), async (req,res) => {
 				...(company_id ? { company_id }:{})
 			}
 		});
-		if(!found) return res.status(404).send({ error: "Vehicle not found" });
+		if(!found) throw new NotFoundError("Vehículo no encontrado");
 
 		return res.status(204).end();
 	} catch (error) {
-		console.log(error);
-		return res.status(500).send({ error: "Internal Server Error" });
+		next(error);
 	}
 });
 
-router.get("/", async (req,res) => {
+router.get("/", async (req,res,next) => {
 	const { available } = req.query; // return only unused vehicles
 	const company_id = limitCompanyScope(req);
 	try {
@@ -72,65 +70,61 @@ router.get("/", async (req,res) => {
 		}});
 		return res.status(200).send(vehicles);
 	} catch (error) {
-		console.log(error);
-		return res.status(500).send({ error: "Internal Server Error" });
+		next(error);
 	}
 });
 
-router.get("/assigned", hasRole('driver'), async (req,res) => {
+router.get("/assigned", hasRole('driver'), async (req,res,next) => {
 	try {
 		if(req.user.role === "driver") return res.send(await req.user.Driver.getVehicle());
 	} catch (error) {
-		console.error(error);
-		return res.status(500).send({ error: "Internal Server Error" });
+		next(error);
 	}
 });
 
-router.get("/:id", async (req,res) => {
+router.get("/:id", async (req,res,next) => {
 	const { id } = req.params;
 	const company_id = limitCompanyScope(req);
 	try {
 		const vehicle = await Vehicle.findOne({ where: { id, company_id }});
-		if(!vehicle) return res.status(404).send({ error: 'Vehicle not found' });
+		if(!vehicle) throw new NotFoundError('Vehículo no encontrado');
 		return res.status(200).send(vehicle);
 	} catch (error) {
-		console.log(error);
-		return res.status(500).send({ error: "Internal Server Error" });
+		next(error);
 	}
 });
 
-router.put("/:id/assign", async (req,res) => {
+router.put("/:id/assign", async (req,res,next) => {
 	const { id } = req.params;
 	const company_id = limitCompanyScope(req);
 	const where = company_id ? { company_id }:{}
 	try {
 		let driver = req.user.Driver;
 		if(!driver) {
-			if(!req.body?.driver_id) return res.status(400).send({ error: "Missing driver_id" });
+			if(!req.body?.driver_id) throw new BadRequestError('Falta driver_id');
 			driver = await Driver.findOne({ where: {id: req.body.driver_id, ...where} });
 		}
-		if(!driver) return res.status(404).send({ error: "Driver not found" });
+		if(!driver) throw new NotFoundError("Conductor no encontrado");
 
 		let vehicle = await driver.getVehicle();
 		if(vehicle) {
-			if(driver.id !== vehicle.in_use_by) return res.status(409).send({ error: "Driver already has a vehicle" });
+			if(driver.id !== vehicle.in_use_by) throw new ConflictError("El conductor ya tiene un vehículo asignado");
 			return res.status(200).send(vehicle);
 		}
 
 		vehicle = await Vehicle.findOne({ where: {id, ...where} });
-		if(!vehicle) return res.status(404).send({ error: "Vehicle not found" });
+		if(!vehicle) throw new NotFoundError("Vehículo no encontrado");
 		if(vehicle.in_use_by && vehicle.in_use_by != driver.id)
-			return res.status(409).send({ error: "Vehicle in use by another driver" });
+			throw new ConflictError("Vehículo en uso por otro conductor");
 
 		await driver.setVehicle(vehicle);
 		return res.status(200).send(vehicle);
 	} catch (error) {
-		console.log(error);
-		return res.status(500).send({ error: "Internal Server Error" });
+		next(error);
 	}
 });
 
-router.delete("/:id/assign", async (req,res) => {
+router.delete("/:id/assign", async (req,res,next) => {
 	const { id } = req.params;
 	const company_id = limitCompanyScope(req);
 	try {
@@ -139,15 +133,14 @@ router.delete("/:id/assign", async (req,res) => {
 			...(company_id ? {company_id}:{})
 		}});
 
-		if(!vehicle) return res.status(404).send({ error: "Vehicle not found" });
+		if(!vehicle) throw new NotFoundError("Vehículo no encontrado");
 		if(vehicle.in_use_by && req.user.driver_id && vehicle.in_use_by !== req.user.driver_id) 
-			return res.status(403).send({ error: "Vehicle assigned to another driver" });
+			throw new ForbiddenError("Vehículo en uso por otro conductor");
 
 		await vehicle.setDriver(null);
 		return res.status(204).end();
 	} catch (error) {
-		console.log(error);
-		return res.status(500).send({ error: "Internal Server Error" });
+		next(error)
 	}
 });
 
