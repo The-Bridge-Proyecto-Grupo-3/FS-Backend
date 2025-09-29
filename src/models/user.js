@@ -67,7 +67,7 @@ module.exports = (sequelize, DataTypes) => {
 		{
 			tableName: "users",
 			paranoid: true,
-			indexes: [{ unique: true, fields: ["email"] }, { fields: ["role"] }],
+			indexes: [{ fields: ["role"] }],
 			validate: {
 				validRole() {
 					if(this.role === "admin" && (this.company_id || this.driver_id)) throw new Error("Admin cannot be linked to a company or driver");
