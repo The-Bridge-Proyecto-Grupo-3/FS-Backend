@@ -10,7 +10,12 @@ module.exports = (sequelize, DataTypes) => {
 			email: {
 				type: DataTypes.STRING(190),
 				allowNull: false,
-				validate: { isEmail: true }
+				unique: { msg: 'Este correo ya está registrado' },
+				validate: {
+					notNull: { msg: 'El correo es obligatorio' },
+					notEmpty: { msg: 'El correo está vacío' },
+					isEmail: { msg: 'El correo es inválido' }
+				}
 			},
 			role: {
 				type: DataTypes.ENUM("admin","company","driver"),
