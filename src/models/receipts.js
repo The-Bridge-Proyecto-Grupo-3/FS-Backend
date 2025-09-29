@@ -24,15 +24,27 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		price: {
 			type: DataTypes.INTEGER.UNSIGNED,
-			allowNull: false
+			allowNull: false,
+			validate: {
+				notNull: { msg: 'El precio es obligatorio' },
+				isNumeric: { msg: 'El precio debe ser numérico' },
+			}
 		},
 		quantity: {
 			type: DataTypes.FLOAT.UNSIGNED,
-			allowNull: true
+			allowNull: false,
+			validate: {
+				notNull: { msg: 'La cantidad es obligatoria' },
+				isNumeric: { msg: 'La cantidad debe ser numérica' },
+			}
 		},
 		mileage: {
 			type: DataTypes.INTEGER.UNSIGNED,
-			allowNull: true
+			allowNull: false,
+			validate: {
+				notNull: { msg: 'El kilometraje es obligatorio' },
+				isNumeric: { msg: 'El kilometraje debe ser numérico' },
+			}
 		}
 	}, {
 		tableName: 'receipts',

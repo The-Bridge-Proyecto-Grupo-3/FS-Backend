@@ -20,7 +20,6 @@ module.exports = {
       }).on("error", function (err) {
         console.error(err.message);
       }).on("end", async () => {
-        console.log(stations[0], stations[stations.length-1]);
         await queryInterface.bulkInsert('evstations', stations);
       })
     );

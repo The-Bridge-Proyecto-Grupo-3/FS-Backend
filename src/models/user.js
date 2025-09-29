@@ -10,7 +10,12 @@ module.exports = (sequelize, DataTypes) => {
 			email: {
 				type: DataTypes.STRING(190),
 				allowNull: false,
-				validate: { isEmail: true }
+				unique: { msg: 'Este correo ya está registrado' },
+				validate: {
+					notNull: { msg: 'El correo es obligatorio' },
+					notEmpty: { msg: 'El correo está vacío' },
+					isEmail: { msg: 'El correo es inválido' }
+				}
 			},
 			role: {
 				type: DataTypes.ENUM("admin","company","driver"),
@@ -62,7 +67,7 @@ module.exports = (sequelize, DataTypes) => {
 		{
 			tableName: "users",
 			paranoid: true,
-			indexes: [{ unique: true, fields: ["email"] }, { fields: ["role"] }],
+			indexes: [{ fields: ["role"] }],
 			validate: {
 				validRole() {
 					if(this.role === "admin" && (this.company_id || this.driver_id)) throw new Error("Admin cannot be linked to a company or driver");

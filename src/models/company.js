@@ -7,30 +7,52 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		name: {
 			type: DataTypes.STRING(60),
-			allowNull: false
+			allowNull: false,
+			validate: {
+				notNull: { msg: 'El nombre de la empresa es obligatorio' },
+				notEmpty: { msg: 'El nombre de la empresa está vacío' }
+			}
 		},
 		postal_code: {
 			type: DataTypes.INTEGER.UNSIGNED,
-			allowNull: false
+			allowNull: false,
+			validate: {
+				notNull: { msg: 'El código postal es obligatorio' },
+				isInt: { msg: 'El código postal debe ser un número' },
+				is5Digits(value) {
+					if(!/^\d{5}$/.test(value)) throw new Error('El código postal debe tener 5 cifras');
+				}
+			}
 		},
 		address: {
 			type: DataTypes.STRING(150),
-			allowNull: false
+			allowNull: false,
+			validate: {
+				notNull: { msg: 'La dirección es obligatoria' },
+				notEmpty: { msg: 'La dirección está vacía' }
+			}
 		},
 		state: {
 			type: DataTypes.STRING(40),
-			allowNull: false
+			allowNull: false,
+			validate: {
+				notNull: { msg: 'La provincia es obligatoria' },
+				notEmpty: { msg: 'La provincia está vacía' }
+			}
 		},
 		CIF: {
 			type: DataTypes.CHAR(9),
 			allowNull: false,
-			unique: true,
+			unique: { msg: 'Este CIF ya está registrado' },
 			validate: {
+				notNull: { msg: 'El CIF es obligatorio' },
 				validCIF(cif) {
-					if(!cif || typeof cif != "string" || cif.length != 9) return false;
-					if(!/^[A-HJNP-SU-W]\d{7}[0-9A-J]$/.test(cif)) return false;
-					if((cif.substring(1,3) === "00" || /[NP-SW]/.test(cif[0])) && !/[A-J]/.test(cif[8])) return false;
-					if(/[ABEH]/.test(cif[0]) && !/\d/.test(cif[8])) return false;
+					if(!cif || typeof cif != "string" || cif.length != 9) throw new Error('El CIF debe tener 9 caracteres');
+					if(
+						(!/^[A-HJNP-SU-W]\d{7}[0-9A-J]$/.test(cif)) ||
+						((cif.substring(1,3) === "00" || /[NP-SW]/.test(cif[0])) && !/[A-J]/.test(cif[8])) ||
+						(/[ABEH]/.test(cif[0]) && !/\d/.test(cif[8]))
+				 	) throw new Error('El CIF es inválido');
 
 					let control = cif[8];
 					if(/[A-J]/.test(control)) control = (cif[8].charCodeAt(0)-54)%10;
@@ -41,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
 						sumOdd += prod < 10 ? prod:prod-9;
 					}
 					const res = (10-(sumEven + sumOdd)%10)%10;
-					return res == control;
+					if(res != control) throw new Error('El CIF es inválido');
 				}
 			}
 		},
@@ -52,7 +74,11 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		payment_entity: {
 			type: DataTypes.STRING(30),
-			allowNull: false
+			allowNull: false,
+			validate: {
+				notNull: { msg: 'La entidad de pago es obligatoria' },
+				notEmpty: { msg: 'La entidad de pago está vacía' }
+			}
 		}
 	}, {
 		tableName: 'companies',

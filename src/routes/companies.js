@@ -5,13 +5,14 @@ const env = require('../config/env');
 const { sendMail } = require('../config/nodemailer');
 const { signEmailVerification } = require('../utils/jwt');
 const { limitCompanyScope, authenticate, hasRole } = require('../middleware/authentication');
+const { BadRequestError } = require('../errors/httpErrors');
 
 const router = Router();
 
 router.post('/', async (req,res,next) => {
 	const { email, password, ...companyData } = req.body;
 	const emailSent = env.mail.sendVerification;
-
+	if(!password) throw new BadRequestError('La contraseña está vacía');
 	try {
 		const company = await Company.create(companyData);
 
