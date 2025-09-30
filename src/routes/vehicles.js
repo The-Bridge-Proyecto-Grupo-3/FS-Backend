@@ -60,14 +60,17 @@ router.get("/", async (req,res,next) => {
 	const { available } = req.query; // return only unused vehicles
 	const company_id = limitCompanyScope(req) ?? req.query.company_id;
 	try {
-		const vehicles = await Vehicle.findAll({ where: {
-			...(company_id ? {company_id}:{}),
-			...(available === "true" ? {
-				in_use_by: {
-					[Op.is]: null
-				}
-			}:{})
-		}});
+		const vehicles = await Vehicle.findAll({
+			where: {
+				...(company_id ? {company_id}:{}),
+				...(available === "true" ? {
+					in_use_by: {
+						[Op.is]: null
+					}
+				}:{})
+			},
+			order: [['license_plate','ASC']]
+		});
 		return res.status(200).send(vehicles);
 	} catch (error) {
 		next(error);

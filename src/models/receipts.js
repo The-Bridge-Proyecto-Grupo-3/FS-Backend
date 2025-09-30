@@ -1,8 +1,12 @@
 module.exports = (sequelize, DataTypes) => {
 	const Receipt = sequelize.define('Receipt', {
+		id: {
+			type: DataTypes.BIGINT.UNSIGNED,
+			primaryKey: true,
+			autoIncrement: true,
+		},
 		driver_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
-			primaryKey: true,
 			allowNull: false,
 			references: {
 				model: 'drivers',
@@ -11,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		vehicle_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
-			primaryKey: true,
 			allowNull: false,
 			references: {
 				model: 'vehicles',

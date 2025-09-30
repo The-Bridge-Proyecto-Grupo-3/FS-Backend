@@ -24,21 +24,23 @@ module.exports = {
     const vehicles = [];
 
     driverRows.forEach((driver, i) => {
-      const brand = brands[Math.floor(Math.random() * brands.length)];
-      const modelList = vehicleData[brand];
-      const model = modelList[Math.floor(Math.random() * modelList.length)];
-
-      vehicles.push({
-        brand,
-        model,
-        license_plate: Math.floor(Math.random()*10000)+new Array(3).fill(0).map(_=> String.fromCharCode(Math.floor(65+Math.random()*26))).join(""),
-        registration_date: new Date(),
-        type: ['gas', 'electric'][i&1],
-        in_use_by: driver.id,
-        company_id: driver.company_id,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      });
+      for(let j = 0; j < 10; j++) {
+        const brand = brands[Math.floor(Math.random() * brands.length)];
+        const modelList = vehicleData[brand];
+        const model = modelList[Math.floor(Math.random() * modelList.length)];
+  
+        vehicles.push({
+          brand,
+          model,
+          license_plate: Math.floor(Math.random()*10000)+new Array(3).fill(0).map(_=> String.fromCharCode(Math.floor(65+Math.random()*26))).join(""),
+          registration_date: new Date(),
+          type: ['gas', 'electric'][i&1],
+          in_use_by: j == 0 ? driver.id:null,
+          company_id: driver.company_id,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      }
     });
 
     await queryInterface.bulkInsert('vehicles', vehicles);
