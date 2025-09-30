@@ -1,6 +1,6 @@
 const { User, Company, Driver, Vehicle } = require('../models');
 const { verifyLogin } = require('../utils/jwt');
-const { UnauthorizedError, ForbiddenError, InternalSeverError } = require('../errors/httpErrors');
+const { UnauthorizedError, ForbiddenError, InternalServerError } = require('../errors/httpErrors');
 
 module.exports = {
 	authenticate: async (req,res,next) => {
@@ -21,8 +21,8 @@ module.exports = {
 		}
 	},
 	hasRole: (...roles) => async (req,res,next) => {
-		if(!req.user) next(new InternalSeverError("Falta autenticación."));
-		if(!roles.includes(req.user.role)) next(new ForbiddenError(`Roles permitidos: ${roles.join(', ')}`));
+		if(!req.user) throw new InternalServerError("Falta autenticación.");
+		if(!roles.includes(req.user.role)) throw new ForbiddenError(`Roles permitidos: ${roles.join(', ')}`);
 		next();
 	},
 	limitCompanyScope: (req) => {
@@ -30,6 +30,6 @@ module.exports = {
 		if(role==="admin") return null;
 		if(role==="company") return req.user.company_id;
 		if(role==="driver") return req.user.Driver.company_id;
-		throw new InternalSeverError('Role not implemented');
+		throw new InternalServerError('Role not implemented');
 	}
 }
